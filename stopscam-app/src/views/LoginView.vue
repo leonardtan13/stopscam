@@ -7,4 +7,10 @@ import RegisterForm from "../components/RegisterForm.vue";
   <RegisterForm />
 </template>
 
-<style></style>
+<style>
+
+body {
+  background-color: #0d3939;
+}
+
+</style>

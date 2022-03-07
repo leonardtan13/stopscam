@@ -4,34 +4,21 @@
 
 <template>
   <div class="h-screen w-screen flex justify-center sm:mt-20">
-    <div class="w-5/6 sm:w-1/3">
-      <h1 class="sm:absolute left-10">Hello</h1>
+    <div class="w-4/5 sm:w-1/3">
+      <div class="ml-6 mb-6 sm:absolute left-10 md:mt-4">
+        <h1 class='text-4xl text-white'>Welcome back to the <br> community.</h1>
+        <p class='text-sm text-white'> Login to start spreading the words. </p>
+      </div>
       <div
         class="rounded bg-white rounded overflow-hidden shadow-xl p-5 sm:absolute right-10"
       >
         <form class="space-y-4" action="/post">
-          <div class="rounded-md shadow-sm -space-y-px">
+          <div class="rounded-md space-y-px px-3">
             <div class="grid gap-6">
               <div class="col-span-12">
                 <label
-                  class="block text-sm font-medium text-gray-700"
-                  for="first_name"
-                  >First name</label
-                >
-
-                <input
-                  id="first_name"
-                  type="text"
-                  name="first_name"
-                  autocomplete="given-name"
-                  class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
-
-              <div class="col-span-12">
-                <label
                   for="email_address"
-                  class="block text-sm font-medium text-gray-700"
+                  class="ml-1 block text-sm font-medium text-gray-700"
                   >Email address</label
                 >
                 <input
@@ -39,14 +26,27 @@
                   type="text"
                   name="email_address"
                   autocomplete="email"
-                  class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                  class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-md sm:text-sm border-gray-300 rounded-md"
+                />
+              </div>
+              <div class="col-span-12 m-2">
+                <label
+                  class="block ml-1 text-sm font-medium text-gray-700"
+                  for="password"
+                  >Password</label
+                >
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-md sm:text-sm border-gray-300 rounded-md"
                 />
               </div>
             </div>
           </div>
 
           <div class="flex items-center justify-between pt-5">
-            <div class="text-xs absolute right-4">
+            <div class="text-xs absolute right-24 sm:right-8">
               <a
                 href="#"
                 class="font-small text-green-600 hover:text-green-500"
@@ -65,15 +65,15 @@
             </button>
           </div>
         </form>
-        <div class='flex items-center justify-center pt-5'>
-          <p class='text-xs'>
+        <div class="flex items-center justify-center pt-5">
+          <p class="text-xs">
             Not a member yet?
             <span>
               <a
                 href="#"
                 class="font-small text-green-600 hover:text-green-500"
               >
-              Sign up
+                Sign up
               </a>
             </span>
           </p>
