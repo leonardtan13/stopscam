@@ -11,10 +11,10 @@ const router = createRouter({
       path: "/login",
       component: () => import("../views/LoginView.vue"),
     },
-    // {
-    //   path: "/sign-in",
-    //   component: () => import("../views/SignIn.vue"),
-    // },
+    {
+      path: "/register",
+      component: () => import("../views/RegisterView.vue"),
+    },
     // {
     //   path: "/feed",
     //   component: () => import("../views/Feed.vue"),
