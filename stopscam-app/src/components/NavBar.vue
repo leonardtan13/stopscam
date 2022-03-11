@@ -9,15 +9,22 @@ const toggleNavbar = () => {
 </script>
 
 <template>
-  <nav class="relative flex flex-wrap items-center justify-between px-2 py-3 mb-3" id="navbar">
-    <div class="container px-2 mx-auto flex flex-wrap items-center justify-between">
+  <nav
+    id="navbar"
+    class="relative flex flex-wrap items-center justify-between px-2 mb-2"
+  >
+    <div
+      class="container mx-auto flex flex-wrap items-center justify-between"
+    >
       <div
         class="w-full relative flex justify-between lg:w-auto px-4 lg:static lg:block lg:justify-start"
       >
         <router-link
           class="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white"
           to="/"
-        >STOP SCAM IMAGE</router-link>
+          ><img src="../assets/ss_logo.png" alt="stop scam logo" class="h-12">
+          </router-link
+        >
         <button
           class="text-white cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
           type="button"
@@ -27,14 +34,18 @@ const toggleNavbar = () => {
         </button>
       </div>
 
-      <div :class="{ hidden: !showMenu, flex: showMenu }" class="lg:flex lg:flex-grow items-center">
+      <div
+        :class="{ hidden: !showMenu, flex: showMenu }"
+        class="lg:flex lg:flex-grow items-center"
+      >
         <ul class="flex flex-col lg:flex-row list-none ml-auto">
           <li class="nav-item">
             <button>
               <router-link
                 class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
                 to="/"
-              >Community</router-link>
+                >Community</router-link
+              >
             </button>
           </li>
           <li class="nav-item">
@@ -42,7 +53,8 @@ const toggleNavbar = () => {
               <router-link
                 class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
                 to="/"
-              >Log In</router-link>
+                >Log In</router-link
+              >
             </button>
           </li>
           <li class="nav-item">
@@ -50,7 +62,8 @@ const toggleNavbar = () => {
               <router-link
                 class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
                 to="/"
-              >Sign Up</router-link>
+                >Sign Up</router-link
+              >
             </button>
           </li>
         </ul>
