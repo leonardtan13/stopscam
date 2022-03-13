@@ -13,18 +13,15 @@ const toggleNavbar = () => {
     id="navbar"
     class="relative flex flex-wrap items-center justify-between px-2 mb-2"
   >
-    <div
-      class="container mx-auto flex flex-wrap items-center justify-between"
-    >
+    <div class="container mx-auto flex flex-wrap items-center justify-between">
       <div
         class="w-full relative flex justify-between lg:w-auto px-4 lg:static lg:block lg:justify-start"
       >
         <router-link
           class="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white"
           to="/"
-          ><img src="../assets/ss_logo.png" alt="stop scam logo" class="h-12">
-          </router-link
-        >
+          ><img src="../assets/ss_logo.png" alt="stop scam logo" class="h-12" />
+        </router-link>
         <button
           class="text-white cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
           type="button"

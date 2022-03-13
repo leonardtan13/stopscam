@@ -31,10 +31,10 @@ const Register = () => {
   console.log(confirmPassword);
 
   nameError.value = checkInput(name);
-  loading.value = true
-  setTimeout(() => {  loading.value = false }, 2000);
-  
-
+  loading.value = true;
+  setTimeout(() => {
+    loading.value = false;
+  }, 2000);
 };
 </script>
 
@@ -98,8 +98,6 @@ const Register = () => {
         </form>
 
         <FormToggle toggle-index="register" />
-
-
       </div>
     </div>
   </div>
