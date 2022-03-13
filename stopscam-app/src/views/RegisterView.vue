@@ -8,20 +8,20 @@ import ErrorMsg from "../components/ErrorMsg.vue";
 
 import { ref } from "vue";
 
-
 const name = ref("");
 let nameError = ref(false);
 const email = ref("");
 const password = ref("");
 
 const confirmPassword = ref("");
+const loading = ref(false);
 
 function checkInput(userInput) {
-      if (userInput.value === "" ) {
-        return true
-    } else {
-      return false
-    }
+  if (userInput.value === "") {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 const Register = () => {
@@ -30,7 +30,11 @@ const Register = () => {
   console.log(name);
   console.log(confirmPassword);
 
-  nameError.value = checkInput(name)
+  nameError.value = checkInput(name);
+  loading.value = true
+  setTimeout(() => {  loading.value = false }, 2000);
+  
+
 };
 </script>
 
@@ -46,13 +50,8 @@ const Register = () => {
           <div class="rounded-md space-y-px px-3">
             <div class="grid gap-6">
               <div class="col-span-12">
-                <FormInput 
-                  id="name" 
-                  v-model="name" 
-                  type="text" 
-                  name="Name" 
-                />
-                <ErrorMsg v-if="nameError" error="empty" id="name"/>
+                <FormInput id="name" v-model="name" type="text" name="Name" />
+                <ErrorMsg v-if="nameError" id="name" error="empty" />
               </div>
 
               <div class="col-span-12">
@@ -95,10 +94,12 @@ const Register = () => {
             </div>
           </div>
 
-          <FormButton toggle-index="register" />
+          <FormButton toggle-index="register" :spinner="loading" />
         </form>
 
         <FormToggle toggle-index="register" />
+
+
       </div>
     </div>
   </div>
