@@ -1,9 +1,79 @@
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+
+const showMenu = ref(false);
+
+const toggleNavbar = () => {
+  showMenu.value = !showMenu.value;
+};
+</script>
 
 <template>
-  <nav>
-    <router-link to="/">Home</router-link>
+  <nav
+    id="navbar"
+    class="relative flex flex-wrap items-center justify-between px-2 mb-2"
+  >
+    <div
+      class="container mx-auto flex flex-wrap items-center justify-between"
+    >
+      <div
+        class="w-full relative flex justify-between lg:w-auto px-4 lg:static lg:block lg:justify-start"
+      >
+        <router-link
+          class="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white"
+          to="/"
+          ><img src="../assets/ss_logo.png" alt="stop scam logo" class="h-12">
+          </router-link
+        >
+        <button
+          class="text-white cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
+          type="button"
+          @click="toggleNavbar()"
+        >
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+
+      <div
+        :class="{ hidden: !showMenu, flex: showMenu }"
+        class="lg:flex lg:flex-grow items-center"
+      >
+        <ul class="flex flex-col lg:flex-row list-none ml-auto">
+          <li class="nav-item">
+            <button>
+              <router-link
+                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                to="/"
+                >Community</router-link
+              >
+            </button>
+          </li>
+          <li class="nav-item">
+            <button>
+              <router-link
+                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                to="/"
+                >Log In</router-link
+              >
+            </button>
+          </li>
+          <li class="nav-item">
+            <button>
+              <router-link
+                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                to="/"
+                >Sign Up</router-link
+              >
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
   </nav>
 </template>
 
-<style scoped></style>
+<style scoped>
+#navbar {
+  background-color: var(--dark-green-color);
+}
+</style>
