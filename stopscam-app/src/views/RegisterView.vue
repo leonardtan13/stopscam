@@ -1,37 +1,95 @@
 <script setup>
-//Authentication function and pass login state to App
+import { ref, reactive } from "vue";
+
 import FormInput from "../components/FormInput.vue";
 import SideBanner from "../components/SideBanner.vue";
 import FormToggle from "../components/FormToggle.vue";
 import FormButton from "../components/FormButton.vue";
 import ErrorMsg from "../components/ErrorMsg.vue";
 
-import { ref } from "vue";
+const state = reactive({
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  accept: false,
+});
 
-const name = ref("");
-let nameError = ref(false);
-const email = ref("");
-const password = ref("");
+const error = reactive ({
+  name: [false, ''],
+  email: [false, ''],
+  password: [false, ''],
+  confirmPassword: [false, ''],
+  checkbox: [false, ''],
+})
 
-const confirmPassword = ref("");
-const loading = ref(false);
+function checkEmail(userInput) {
+  let firstCheck = checkEmpty(userInput)
+  if (firstCheck[0]) {
+    return firstCheck
+  } else if (!userInput.includes("@")) {
+      return [true, 'invalidEmail'];
+    } else {
+      return [false, '']
+    }
+}
+function checkPasswords(password) {
+  let firstCheck = checkEmpty(password)
+  if (firstCheck[0]) {
+    return firstCheck
+  }
+    if (password.length < 8) {
+    return [true, 'shortPw']
+    } else {
+      return [false, '']
+    }
+  }
 
-function checkInput(userInput) {
-  if (userInput.value === "") {
-    return true;
+function crossCheckPasswords(password, confirmPassword) {
+ if (password != confirmPassword) {
+    return [true, 'unequalPws']
   } else {
-    return false;
+    return [false, '']
   }
 }
 
-const Register = () => {
-  console.log(email);
-  console.log(password);
-  console.log(name);
-  console.log(confirmPassword);
+function checkEmpty(userInput) {
+  if (userInput === "") {
+    return [true, 'empty'];
+  } else {
+    return [false, ''];
+  }
+}
 
-  nameError.value = checkInput(name);
+function checkTerms(userInput) {
+  if (!userInput) {
+    return [true, 'uncheck']
+  } else {
+      return [false, '']
+  }
+
+}
+
+const loading = ref(false);
+
+const Register = () => {
   loading.value = true;
+
+  error.name = checkEmpty(state.name)
+  error.email = checkEmail(state.email)
+  error.password = checkPasswords(state.password)
+  error.confirmPassword = checkPasswords(state.password)
+
+  if (!error.password[0] && !error.confirmPassword[0]) {
+    error.confirmPassword = crossCheckPasswords(state.password, state.confirmPassword)
+  }
+
+  error.checkbox = checkTerms(state.checkbox)
+
+  
+
+
+  
   setTimeout(() => {
     loading.value = false;
   }, 2000);
@@ -49,40 +107,54 @@ const Register = () => {
         <form class="space-y-4" @submit.prevent="Register">
           <div class="rounded-md space-y-px px-3">
             <div class="grid gap-6">
-              <div class="col-span-12">
-                <FormInput id="name" v-model="name" type="text" name="Name" />
-                <ErrorMsg v-if="nameError" id="name" error="empty" />
+              <div class="col-span-12 h-14">
+                <FormInput
+                  id="name"
+                  v-model="state.name"
+                  type="text"
+                  name="Name"
+                  :input-error="error.name[0]"
+                />
+                <ErrorMsg v-if="error.name[0]" id='Name' :error="error.name[1]"  />
               </div>
 
-              <div class="col-span-12">
+              <div class="col-span-12 h-14">
                 <FormInput
                   id="email_address"
-                  v-model="email"
+                  v-model="state.email"
                   type="text"
                   name="Email Address"
+                  :input-error="error.email[0]"
                 />
+                <ErrorMsg v-if="error.email[0]" id='Email' :error="error.email[1]"  />
               </div>
 
-              <div class="col-span-12">
+              <div class="col-span-12 h-14">
                 <FormInput
                   id="password"
-                  v-model="password"
+                  v-model="state.password"
                   type="password"
                   name="Password"
+                  :input-error="error.password[0]"
                 />
+                <ErrorMsg v-if="error.password[0]" id='Password' :error="error.password[1]"  />
               </div>
 
-              <div class="col-span-12">
+              <div class="col-span-12 ">
                 <FormInput
                   id="confirmPassword"
-                  v-model="confirmPassword"
+                  v-model="state.confirmPassword"
                   type="password"
                   name="Confirm Password"
+                  :input-error="error.confirmPassword[0]"
                 />
+                <ErrorMsg v-if="error.confirmPassword[0]" id='Confirm Password' :error="error.confirmPassword[1]"  />
               </div>
             </div>
             <div class="form-check pt-4">
               <input
+                v-model="state.checkbox"
+                id="accept"
                 type="checkbox"
                 class="form-checkbox h-3 w-3 text-green-600"
               />
@@ -92,6 +164,7 @@ const Register = () => {
                 <span class="font-bold">Privacy Policy</span>
               </span>
             </div>
+            <ErrorMsg v-if="error.checkbox[0]" id='Checkbox' :error="error.checkbox[1]"  />
           </div>
 
           <FormButton toggle-index="register" :spinner="loading" />

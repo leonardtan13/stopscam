@@ -5,16 +5,26 @@ defineProps({
   id: String,
 });
 
+const errorMsgs = {
+  empty: "Please fill in your ",
+  invalidEmail: "Please make sure your email has an @",
+  shortPw: 'Please make sure your password is 8 characters long',
+  unequalPws: 'Please make sure your passwords match',
+  uncheck: 'Please check the terms and conditions',
+};
+
 function DisplayError(error, id) {
-  return id + " is " + error;
+  if (error == "empty") {
+    return errorMsgs[error] + id;
+  } else {
+    return errorMsgs[error]
+  }
+  
 }
 </script>
 
 <template>
-  <div
-    class="mt-3 bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded-md relative"
-    role="alert"
-  >
-    <span class="block xs:inline text-xs">{{ DisplayError(error, id) }}</span>
-  </div>
+  <span class="xs:inline text-xs text-rose-400 ml-2">{{
+    DisplayError(error, id)
+  }}</span>
 </template>
