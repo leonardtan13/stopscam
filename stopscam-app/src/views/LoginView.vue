@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from "vue";
-import {auth}  from "../firebase";
+import { auth } from "../firebase";
 import router from "../router";
 
 import FormInput from "../components/FormInput.vue";
@@ -14,13 +14,13 @@ const state = reactive({
   email: "",
   password: "",
   valid: false,
-  forgetEmail : ''
+  forgetEmail: "",
 });
 
 const error = reactive({
   email: [false, ""],
   password: [false, ""],
-  forget: [false, ""]
+  forget: [false, ""],
 });
 
 function checkEmpty(userInput) {
@@ -68,40 +68,40 @@ function formValid() {
 const loading = ref(false);
 
 const Login = () => {
-  loading.value = true
+  loading.value = true;
   state.valid = formValid();
 
   if (state.valid) {
-    auth.signInWithEmailAndPassword(state.email, state.password)
+    auth
+      .signInWithEmailAndPassword(state.email, state.password)
       .then(() => {
         loading.value = false;
-        router.push('/') // redirect to the feed
+        router.push("/"); // redirect to the feed
       })
-      .catch(fbError => {
+      .catch((fbError) => {
         loading.value = false;
-        if (fbError.code.includes('user')) {
-          error.email = [true, 'wrongUser']
-        } else if (fbError.code.includes('password')) {
-          error.email = [true, '']
-          error.password = [true, 'wrongPw']
+        if (fbError.code.includes("user")) {
+          error.email = [true, "wrongUser"];
+        } else if (fbError.code.includes("password")) {
+          error.email = [true, ""];
+          error.password = [true, "wrongPw"];
         }
-        
       });
   } else {
-    loading.value = false
+    loading.value = false;
   }
 };
 
 let isOpen = ref(false);
 
 function openModal() {
-        this.isOpen = true;
+  this.isOpen = true;
 }
 
 function closeModal() {
-        this.isOpen = false;
+  this.isOpen = false;
 }
- </script>
+</script>
 <template>
   <div class="h-screen w-screen flex justify-center sm:mt-20">
     <div class="w-4/5 sm:w-1/3">
@@ -149,14 +149,15 @@ function closeModal() {
               <a
                 href="#"
                 class="font-small text-[#0D3939] hover:text-green-500"
-                @click="openModal()">
+                @click="openModal()"
+              >
                 Forgot password?
               </a>
-              <forgetPassword v-show='isOpen' @exit='closeModal()' />
+              <forgetPassword v-show="isOpen" @exit="closeModal()" />
             </div>
           </div>
 
-          <FormButton toggle-index="login" :spinner="loading"/>
+          <FormButton toggle-index="login" :spinner="loading" />
         </form>
 
         <FormToggle toggle-index="login" />

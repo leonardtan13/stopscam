@@ -11,26 +11,26 @@ const errorMsgs = {
   shortPw: "Please make sure your password is 8 characters long",
   unequalPws: "Please make sure your passwords match",
   uncheck: "Please check the terms and conditions",
-  wrongUser: 'User is not found',
-  wrongPw: 'Login fail. Please check your email/password',
+  wrongUser: "User is not found",
+  wrongPw: "Login fail. Please check your email/password",
 };
 
 function DisplayError(error, id) {
-  if (id == 'authenticate') {
-    error = error.split('/')[1]
-    let errorArr = error.split('-')
-    let displayArr = []
-    let displayError = ''
+  if (id == "authenticate") {
+    error = error.split("/")[1];
+    let errorArr = error.split("-");
+    let displayArr = [];
+    let displayError = "";
     for (let i = 0; i < errorArr.length; i++) {
       if (i == 0) {
-        let word = errorArr[0].charAt(0).toUpperCase() + errorArr[0].slice(1)
-        displayArr.push(word)
+        let word = errorArr[0].charAt(0).toUpperCase() + errorArr[0].slice(1);
+        displayArr.push(word);
       } else {
-        displayArr.push(errorArr[i])
+        displayArr.push(errorArr[i]);
       }
     }
-    displayError = displayArr.join(' ')
-    return displayError
+    displayError = displayArr.join(" ");
+    return displayError;
   }
   if (error == "empty") {
     return errorMsgs[error] + id;
@@ -39,8 +39,6 @@ function DisplayError(error, id) {
   } else {
     return errorMsgs[error];
   }
-
-  
 }
 </script>
 

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from "vue";
-import {auth}  from "../firebase";
+import { auth } from "../firebase";
 import router from "../router";
 
 import FormInput from "../components/FormInput.vue";
@@ -27,9 +27,9 @@ const error = reactive({
 });
 
 const authenticate = reactive({
-    invalid: false,
-    message: ''
-  });
+  invalid: false,
+  message: "",
+});
 
 function checkEmail(userInput) {
   let firstCheck = checkEmpty(userInput);
@@ -107,18 +107,19 @@ const Register = () => {
 
   // Sending valid data to firebase
   if (state.valid) {
-    auth.createUserWithEmailAndPassword(state.email, state.password)
+    auth
+      .createUserWithEmailAndPassword(state.email, state.password)
       .then(() => {
         loading.value = false;
-        router.push('/') // redirect to the feed
+        router.push("/"); // redirect to the feed
       })
-      .catch(fbError => {
+      .catch((fbError) => {
         loading.value = false;
         authenticate.invalid = true;
         authenticate.message = fbError.code;
-        error.email = [true, '']
+        error.email = [true, ""];
       });
-  } 
+  }
 };
 </script>
 
@@ -216,7 +217,6 @@ const Register = () => {
               :error="error.checkbox[1]"
             />
           </div>
-          
 
           <FormButton toggle-index="register" :spinner="loading" />
         </form>

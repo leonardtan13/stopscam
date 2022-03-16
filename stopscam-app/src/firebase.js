@@ -1,7 +1,7 @@
-// i had to change to firebase/compat cause it keep using error of 
+// i had to change to firebase/compat cause it keep using error of
 //
 import firebase from "firebase/compat/app";
-import "firebase/compat/auth"
+import "firebase/compat/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -14,9 +14,7 @@ const firebaseConfig = {
   appId: "1:177473080818:web:293ec4064da89a51646f6b",
 };
 
-
 // i had to split exports for my part, but also when i export they say firebase database not a func
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth();
 //export const db = firebase.database();
-
