@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from "vue";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import router from "../router";
 
 import FormInput from "../components/FormInput.vue";
@@ -100,18 +100,35 @@ function formValid() {
 
 const loading = ref(false);
 
+const database = db.collection('/users')
+
 const Register = () => {
   loading.value = true;
   //validation checks
   state.valid = formValid();
+  console.log(database)
 
   // Sending valid data to firebase
   if (state.valid) {
-    auth
-      .createUserWithEmailAndPassword(state.email, state.password)
+    auth.createUserWithEmailAndPassword(state.email, state.password)
       .then(() => {
         loading.value = false;
-        router.push("/"); // redirect to the feed
+        let user = auth.currentUser
+     if (user)  {
+          console.log(user)
+          database.add({
+            email: state.email,
+            name: state.name,
+            downvotesReceived: 0,
+            upvotesReceived: 0
+
+          }).then(()=> {
+            router.push("/"); // redirect to the feed
+          }).catch((dbError) => {
+            console.log('problem adding to DB', dbError)
+          })
+        };
+        
       })
       .catch((fbError) => {
         loading.value = false;
