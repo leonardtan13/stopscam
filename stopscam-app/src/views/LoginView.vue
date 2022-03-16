@@ -1,18 +1,90 @@
 <script setup>
+import { ref, reactive } from "vue";
+import {auth}  from "../firebase";
+import router from "../router";
+
 import FormInput from "../components/FormInput.vue";
 import SideBanner from "../components/SideBanner.vue";
 import FormToggle from "../components/FormToggle.vue";
 import FormButton from "../components/FormButton.vue";
+import ErrorMsg from "../components/ErrorMsg.vue";
 
-//Authentication function and pass login state to App
-import { ref } from "vue";
+const state = reactive({
+  email: "",
+  password: "",
+  valid: false,
+});
 
-const email = ref("");
-const password = ref("");
+const error = reactive({
+  email: [false, ""],
+  password: [false, ""],
+});
+
+function checkEmpty(userInput) {
+  if (userInput === "") {
+    return [true, "empty"];
+  } else {
+    return [false, ""];
+  }
+}
+
+function checkPasswords(password) {
+  let firstCheck = checkEmpty(password);
+  if (firstCheck[0]) {
+    return firstCheck;
+  }
+  if (password.length < 8) {
+    return [true, "shortPw"];
+  } else {
+    return [false, ""];
+  }
+}
+
+function checkEmail(userInput) {
+  let firstCheck = checkEmpty(userInput);
+  if (firstCheck[0]) {
+    return firstCheck;
+  } else if (!userInput.includes("@")) {
+    return [true, "invalidEmail"];
+  } else {
+    return [false, ""];
+  }
+}
+
+function formValid() {
+  error.email = checkEmail(state.email);
+  error.password = checkPasswords(state.password);
+  for (let key in error) {
+    if (error[key][0]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+const loading = ref(false);
 
 const Login = () => {
-  console.log(email);
-  console.log(password);
+  loading.value = true
+  state.valid = formValid();
+
+  if (state.valid) {
+    auth.signInWithEmailAndPassword(state.email, state.password)
+      .then(() => {
+        loading.value = false;
+        router.push('/') // redirect to the feed
+      })
+      .catch(fbError => {
+        loading.value = false;
+        if (fbError.code.includes('user')) {
+          error.email = [true, 'wrongUser']
+        } else if (fbError.code.includes('password')) {
+          error.email = [true, '']
+          error.password = [true, 'wrongPw']
+        }
+        
+      });
+  }
 };
 </script>
 <template>
@@ -26,38 +98,49 @@ const Login = () => {
         <form class="space-y-4" @submit.prevent="Login">
           <div class="rounded-md space-y-px px-3">
             <div class="grid gap-6">
-              <div class="col-span-12">
+              <div class="col-span-12 h-14">
                 <FormInput
                   id="email_address"
-                  v-model="email"
+                  v-model="state.email"
                   type="text"
                   name="Email Address"
+                  :input-error="error.email[0]"
+                />
+                <ErrorMsg
+                  v-if="error.email[0]"
+                  id="Email"
+                  :error="error.email[1]"
                 />
               </div>
 
-              <div class="col-span-12">
+              <div class="col-span-12 h-14">
                 <FormInput
                   id="password"
-                  v-model="password"
+                  v-model="state.password"
                   type="password"
                   name="Password"
+                  :input-error="error.password[0]"
+                />
+                <ErrorMsg
+                  v-if="error.password[0]"
+                  id="Password"
+                  :error="error.password[1]"
                 />
               </div>
             </div>
           </div>
 
-          <div class="flex items-center justify-between pt-2">
+          <div class="flex items-center justify-between pt-4">
             <div class="text-xs absolute right-24 sm:right-8">
               <a
                 href="#"
-                class="font-small text-[#0D3939] hover:text-green-500"
-              >
+                class="font-small text-[#0D3939] hover:text-green-500">
                 Forgot password?
               </a>
             </div>
           </div>
 
-          <FormButton toggle-index="login" />
+          <FormButton toggle-index="login" :spinner="loading"/>
         </form>
 
         <FormToggle toggle-index="login" />
