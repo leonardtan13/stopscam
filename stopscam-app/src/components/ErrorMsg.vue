@@ -32,12 +32,15 @@ function DisplayError(error, id) {
     displayError = displayArr.join(' ')
     return displayError
   }
-  
   if (error == "empty") {
     return errorMsgs[error] + id;
-  } else{
+  } else if (!(error in errorMsgs)) {
+    return error;
+  } else {
     return errorMsgs[error];
   }
+
+  
 }
 </script>
 

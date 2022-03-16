@@ -107,7 +107,6 @@ const Register = () => {
 
   // Sending valid data to firebase
   if (state.valid) {
-
     auth.createUserWithEmailAndPassword(state.email, state.password)
       .then(() => {
         loading.value = false;
@@ -119,7 +118,7 @@ const Register = () => {
         authenticate.message = fbError.code;
         error.email = [true, '']
       });
-  }
+  } 
 };
 </script>
 

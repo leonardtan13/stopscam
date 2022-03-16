@@ -8,16 +8,19 @@ import SideBanner from "../components/SideBanner.vue";
 import FormToggle from "../components/FormToggle.vue";
 import FormButton from "../components/FormButton.vue";
 import ErrorMsg from "../components/ErrorMsg.vue";
+import forgetPassword from "../components/ForgetPassword.vue";
 
 const state = reactive({
   email: "",
   password: "",
   valid: false,
+  forgetEmail : ''
 });
 
 const error = reactive({
   email: [false, ""],
   password: [false, ""],
+  forget: [false, ""]
 });
 
 function checkEmpty(userInput) {
@@ -84,14 +87,25 @@ const Login = () => {
         }
         
       });
+  } else {
+    loading.value = false
   }
 };
-</script>
+
+let isOpen = ref(false);
+
+function openModal() {
+        this.isOpen = true;
+}
+
+function closeModal() {
+        this.isOpen = false;
+}
+ </script>
 <template>
   <div class="h-screen w-screen flex justify-center sm:mt-20">
     <div class="w-4/5 sm:w-1/3">
       <SideBanner message-index="login" />
-
       <div
         class="rounded-2xl bg-white rounded overflow-hidden shadow-xl p-5 sm:absolute right-10"
       >
@@ -130,13 +144,15 @@ const Login = () => {
             </div>
           </div>
 
-          <div class="flex items-center justify-between pt-4">
+          <div class="flex items-center justify-between pt-4 py-4">
             <div class="text-xs absolute right-24 sm:right-8">
               <a
                 href="#"
-                class="font-small text-[#0D3939] hover:text-green-500">
+                class="font-small text-[#0D3939] hover:text-green-500"
+                @click="openModal()">
                 Forgot password?
               </a>
+              <forgetPassword v-show='isOpen' @exit='closeModal()' />
             </div>
           </div>
 
