@@ -100,35 +100,37 @@ function formValid() {
 
 const loading = ref(false);
 
-const database = db.collection('/users')
+const database = db.collection("/users");
 
 const Register = () => {
   loading.value = true;
   //validation checks
   state.valid = formValid();
-  console.log(database)
+  console.log(database);
 
   // Sending valid data to firebase
   if (state.valid) {
-    auth.createUserWithEmailAndPassword(state.email, state.password)
+    auth
+      .createUserWithEmailAndPassword(state.email, state.password)
       .then(() => {
         loading.value = false;
-        let user = auth.currentUser
-     if (user)  {
-          console.log(user)
-          database.add({
-            email: state.email,
-            name: state.name,
-            downvotesReceived: 0,
-            upvotesReceived: 0
-
-          }).then(()=> {
-            router.push("/"); // redirect to the feed
-          }).catch((dbError) => {
-            console.log('problem adding to DB', dbError)
-          })
-        };
-        
+        let user = auth.currentUser;
+        if (user) {
+          console.log(user);
+          database
+            .add({
+              email: state.email,
+              name: state.name,
+              downvotesReceived: 0,
+              upvotesReceived: 0,
+            })
+            .then(() => {
+              router.push("/"); // redirect to the feed
+            })
+            .catch((dbError) => {
+              console.log("problem adding to DB", dbError);
+            });
+        }
       })
       .catch((fbError) => {
         loading.value = false;
