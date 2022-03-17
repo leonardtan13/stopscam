@@ -1,5 +1,7 @@
 <template>
-  <div class="grid grid-flow-row auto-rows-max mx-auto gap-3 border w-1/2">
+  <div
+    class="grid grid-flow-row auto-rows-max mx-auto gap-3 border border-8 border-gray-700 w-1/2"
+  >
     <div class="w-full">
       <p class="font-sans font-black text-3xl text-center underline">
         {{ props.scamLink }}
@@ -8,84 +10,19 @@
 
     <div class="w-full">
       <p
-        class="font-sans font-medium border border-teal-700 p-5 w-5/6 mx-auto"
+        class="font-sans font-medium border border-teal-700 p-4 w-5/6 mx-auto border-4 text-justify"
       >
         {{ props.caption }}
       </p>
     </div>
 
     <div class="w-full">
-      <div class="carousel w-3/4 mx-auto">
-        <div class="carousel-inner">
-          <input
-            id="carousel-1"
-            class="carousel-open"
-            type="radio"
-            name="carousel"
-            aria-hidden="true"
-            hidden
-            checked="checked"
-          />
-          <div class="carousel-item">
-            <img :src="props.imgURL" />
-          </div>
-          <input
-            id="carousel-2"
-            class="carousel-open"
-            type="radio"
-            name="carousel"
-            aria-hidden="true"
-            hidden
-          />
-          <div class="carousel-item">
-            <img
-              src="https://ttripper.wpengine.com/wp-content/uploads/2018/09/TripAdvisor-New-Interface.jpg"
-            />
-          </div>
-          <input
-            id="carousel-3"
-            class="carousel-open"
-            type="radio"
-            name="carousel"
-            aria-hidden="true"
-            hidden
-          />
-          <div class="carousel-item">
-            <img
-              src="https://hub.wtm.com/wp-content/uploads/2015/03/PastedGraphic-3.jpg"
-            />
-          </div>
-          <label for="carousel-3" class="carousel-control prev control-1"
-            >‹</label
-          >
-          <label for="carousel-2" class="carousel-control next control-1"
-            >›</label
-          >
-          <label for="carousel-1" class="carousel-control prev control-2"
-            >‹</label
-          >
-          <label for="carousel-3" class="carousel-control next control-2"
-            >›</label
-          >
-          <label for="carousel-2" class="carousel-control prev control-3"
-            >‹</label
-          >
-          <label for="carousel-1" class="carousel-control next control-3"
-            >›</label
-          >
-          <ol class="carousel-indicators">
-            <li>
-              <label for="carousel-1" class="carousel-bullet">•</label>
-            </li>
-            <li>
-              <label for="carousel-2" class="carousel-bullet">•</label>
-            </li>
-            <li>
-              <label for="carousel-3" class="carousel-bullet">•</label>
-            </li>
-          </ol>
-        </div>
-      </div>
+      <img
+        :src="imgURLS[0]"
+        width="500"
+        height="500"
+        class="mx-auto border border-black"
+      />
     </div>
 
     <div class="w-full flex">
@@ -93,7 +30,7 @@
         <button id="upvote" @click="voteCount++">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-22 w-16 fill-teal-500"
+            class="h-14 w-14 fill-teal-500"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -112,7 +49,7 @@
         <button id="downvote" @click="voteCount--">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-22 w-16"
+            class="h-14 w-14 fill-red-500"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -130,7 +67,7 @@
       >
         <img class="rounded-full float-left h-full" :src="props.avatar" />
         <span class="font-serif ml-3 font-black">{{ props.user }}</span>
-        <p class="text-gray-600 text-xs ml-24">{{ props.duration }} ago</p>
+        <p class="text-gray-600 text-xs mx-auto">{{ props.duration }} ago</p>
       </div>
     </div>
   </div>
@@ -139,10 +76,11 @@
 <script setup>
 import { ref } from "vue";
 import "../index.css";
+
 const props = defineProps([
   "scamLink",
   "caption",
-  "imgURL",
+  "imgURLS",
   "avatar",
   "user",
   "duration",
