@@ -118,19 +118,22 @@ const data = [
 
 <template>
   <!-- Search bar -->
-  <div class="pt-2 text-gray-600 mb-4 w-3/4 mx-auto h-24">
+  <div class="text-gray-600 text-base mx-auto my-5 w-2/3 h-20">
+    <div class="grid grid-cols-6 gap-4 h-full">
+    
     <img
-      class="inline object-cover w-12 h-12 mr-2 rounded-full ml-64"
+      class="self-center justify-self-end object-cover rounded-full w-12 h-12"
       src="https://0.soompi.io/wp-content/uploads/2022/01/11203504/Kim-Tae-Ri2.jpg"
       alt="Profile image"
     />
     <input
-      class="border-2 border-gray-300 bg-white h-full px-5 pr-16 rounded-lg text-sm focus:outline-none w-1/2"
+      class="col-span-4 bg-white px-5 rounded-lg focus:outline-none"
       type="text"
       name="create"
       placeholder="Post something to your community"
       @click="open = true"
     />
+    </div>
   </div>
 
   <!-- Form Modal -->
@@ -282,45 +285,40 @@ const data = [
   </TransitionRoot>
 
   <!-- Page Filter -->
-
   <nav
-    class="bg-white sm:px-4 py-2.5 mx-auto my-4 w-1/3 rounded-xl"
+    class="md:px-4 px-2 mx-auto my-5 w-1/3 rounded-lg"
   >
-    <div class="container flex flex-wrap justify-evenly items-center mx-auto">
-      <div id="mobile-menu" class="hidden w-full md:block md:w-auto">
-        <ul
-          class="flex flex-row mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium "
-        >
-          <li>
-            <button
-              class="block py-2 pr-4 pl-3 rounded-lg md:p-2 text-lg"
-              :class="ur_selected ? selected_state : unselected_state"
-              aria-current="page"
-              @click="resetState('review')"
-            >
-              Under Review
-            </button>
-          </li>
-          <li>
-            <button
-              class="block py-2 pr-4 pl-3 rounded-lg md:p-2 text-lg"
-              :class="legit_selected ? selected_state : unselected_state"
-              @click="resetState('legit')"
-            >
-              Legit Page
-            </button>
-          </li>
-          <li>
-            <button
-              class="block py-2 pr-4 pl-3 rounded-lg md:p-2 text-lg"
-              :class="scam_selected ? selected_state : unselected_state"
-              @click="resetState('scam')"
-            >
-              Scam Page
-            </button>
-          </li>
-        </ul>
-      </div>
+    <div class="container mx-auto grid grid-cols-3 justify-evenly justify-items-center">
+      <!-- <div id="mobile-menu" class="hidden w-full md:block md:w-auto"> -->
+        <div>
+          <button
+            class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xl w-full"
+            :class="ur_selected ? selected_state : unselected_state"
+            aria-current="page"
+            @click="resetState('review')"
+          >
+            Under Review
+          </button>
+        </div>
+        <div>
+          <button
+            class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xl w-full"
+            :class="legit_selected ? selected_state : unselected_state"
+            @click="resetState('legit')"
+          >
+            Legit Page
+          </button>
+        </div>
+        <div>
+          <button
+            class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xl w-full"
+            :class="scam_selected ? selected_state : unselected_state"
+            @click="resetState('scam')"
+          >
+            Scam Page
+          </button>
+        </div>
+      <!-- </div> -->
     </div>
   </nav>
 
