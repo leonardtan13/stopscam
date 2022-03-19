@@ -11,18 +11,29 @@ input:checked ~ .dot {
   background-color: red;
 }
 
+.default-text {
+  color: #878A8C;
+  text-align: center;
+  vertical-align: bottom;
+  border-bottom: 2px solid transparent;
+}
+.default-text:hover {
+  color: #0d3939;
+  border-bottom-color: #0d3939;
+}
+
+
+/* Vote Buttons */
 #upvote {
   fill: #cdcdcd;
+}
+#upvote:hover {
+  fill: #90d998;
 }
 
 #downvote {
   fill: #cdcdcd;
 }
-
-#upvote:hover {
-  fill: #90d998;
-}
-
 #downvote:hover {
   fill: #ff585b;
 }
