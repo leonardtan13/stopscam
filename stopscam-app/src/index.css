@@ -10,3 +10,19 @@ input:checked ~ .dot {
   transform: translateX(100%);
   background-color: red;
 }
+
+#upvote {
+  fill: #cdcdcd;
+}
+
+#downvote {
+  fill: #cdcdcd;
+}
+
+#upvote:hover {
+  fill: #90d998;
+}
+
+#downvote:hover {
+  fill: #ff585b;
+}
