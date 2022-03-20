@@ -118,19 +118,22 @@ const data = [
 
 <template>
   <!-- Search bar -->
-  <div class="pt-2 text-gray-600 mb-4 w-3/4 mx-auto">
+  <div class="text-gray-600 text-base mx-auto my-5 w-2/3 h-20">
+    <div class="grid grid-cols-6 gap-4 h-full">
+    
     <img
-      class="inline object-cover w-12 h-12 mr-2 rounded-full ml-64"
+      class="self-center justify-self-end object-cover rounded-full w-12 h-12"
       src="https://0.soompi.io/wp-content/uploads/2022/01/11203504/Kim-Tae-Ri2.jpg"
       alt="Profile image"
     />
     <input
-      class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none w-1/2"
+      class="col-span-4 bg-white px-5 rounded-lg focus:outline-none"
       type="text"
       name="create"
       placeholder="Post something to your community"
       @click="open = true"
     />
+    </div>
   </div>
 
   <!-- Form Modal -->
@@ -282,63 +285,61 @@ const data = [
   </TransitionRoot>
 
   <!-- Page Filter -->
-
   <nav
-    class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-800 mb-4 w-1/4 mx-auto"
+    class="md:px-4 px-2 mx-auto my-5 w-1/3 rounded-lg"
   >
-    <div class="container flex flex-wrap justify-evenly items-center mx-auto">
-      <div id="mobile-menu" class="hidden w-full md:block md:w-auto">
-        <ul
-          class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium"
-        >
-          <li>
-            <button
-              class="block py-2 pr-4 pl-3 rounded md:p-2"
-              :class="ur_selected ? selected_state : unselected_state"
-              aria-current="page"
-              @click="resetState('review')"
-            >
-              Under Review
-            </button>
-          </li>
-          <li>
-            <button
-              class="block py-2 pr-4 pl-3 rounded md:p-2"
-              :class="legit_selected ? selected_state : unselected_state"
-              @click="resetState('legit')"
-            >
-              Legit Page
-            </button>
-          </li>
-          <li>
-            <button
-              class="block py-2 pr-4 pl-3 rounded md:p-2"
-              :class="scam_selected ? selected_state : unselected_state"
-              @click="resetState('scam')"
-            >
-              Scam Page
-            </button>
-          </li>
-        </ul>
-      </div>
+    <div class="container mx-auto grid grid-cols-3 justify-evenly justify-items-center">
+      <!-- <div id="mobile-menu" class="hidden w-full md:block md:w-auto"> -->
+        <div>
+          <button
+            class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xl w-full"
+            :class="ur_selected ? selected_state : unselected_state"
+            aria-current="page"
+            @click="resetState('review')"
+          >
+            Under Review
+          </button>
+        </div>
+        <div>
+          <button
+            class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xl w-full"
+            :class="legit_selected ? selected_state : unselected_state"
+            @click="resetState('legit')"
+          >
+            Legit Page
+          </button>
+        </div>
+        <div>
+          <button
+            class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xl w-full"
+            :class="scam_selected ? selected_state : unselected_state"
+            @click="resetState('scam')"
+          >
+            Scam Page
+          </button>
+        </div>
+      <!-- </div> -->
     </div>
   </nav>
 
-  <!-- Nav Link -->
-  <div class="w-3/4 mx-auto bg-white rounded">
-    <ul class="flex border-b">
-      <li class="-mb-px ml-4 mr-4 p-4">
+
+  <div class="w-2/3 mx-auto bg-white rounded-xl">
+    
+    <!-- Nav Filter -->
+    <ul class="w-5/6 flex gap-2 mx-auto h-18">
+      <li class="px-5 pt-5">
         <a
-          class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-teal-700 font-semibold"
+          class="font-sans text-xl inline-block default-text"
           href="#"
           >All</a
         >
+        
       </li>
-      <li class="mr-4 p-4">
+      <li class="px-5 pt-5">
         <a
-          class="bg-white inline-block py-2 px-4 text-teal-700 hover:text-teal-800 font-semibold"
+          class="font-sans text-xl inline-block default-text"
           href="#"
-          >Popular</a
+          >Top</a
         >
       </li>
     </ul>

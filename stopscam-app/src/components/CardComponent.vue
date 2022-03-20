@@ -1,75 +1,82 @@
 <template>
   <div
-    class="grid grid-flow-row auto-rows-max mx-auto gap-3 border border-8 border-gray-700 w-1/2"
+    class="grid grid-flow-row grid-cols-9 auto-rows-max gap-2 mx-auto my-5 w-5/6 h-full
+    rounded-xl shadow-xl border"
   >
-    <div class="w-full">
-      <p class="font-sans font-black text-3xl text-center underline">
-        {{ props.scamLink }}
-      </p>
+  <div class="col-span-8 p-5">
+
+    <!-- User -->
+    <div class="flex flex-row">
+      <div class="px-4 w-full h-full">
+        <div class="flex">
+          <img class="float-left object-cover items-stretch w-12 h-12 
+          rounded-full " :src="props.avatar" />
+          <div class="flex-col my-auto w-full">
+            <div class="font-sans ml-3 font-bold">
+              {{ props.user }}
+            </div>
+            <div class="font-sans ml-3">
+              <p class="text-gray-600 text-xs">Posted {{ props.duration }} ago</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- Post Header (Link) -->
+    <div class="w-full">
+      <div class="basis-2/3 w-full h-full">
+        <p class="font-sans font-bold text-2xl text-left underline 
+        px-4 py-2">
+          {{ props.scamLink }}
+        </p>
+      </div>
+    </div>  
+
+    <!-- Post Body (Caption) -->
     <div class="w-full">
       <p
-        class="font-sans font-medium border border-teal-700 p-4 w-5/6 mx-auto border-4 text-justify"
+        class="font-sans font-normal text-lg mx-auto text-justify
+        px-4 py-2"
       >
         {{ props.caption }}
       </p>
     </div>
 
-    <div class="w-full">
+    <!-- Post Body (Image) -->
+    <div class="w-full rounded-xl">
       <img
         :src="imgURLS[0]"
         width="500"
         height="500"
-        class="mx-auto border border-black"
+        class="mx-auto px-4"
       />
     </div>
 
-    <div class="w-full flex">
-      <div class="flex mx-auto">
-        <button id="upvote" @click="voteCount++">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-14 w-14 fill-teal-500"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </button>
+  </div>
 
-        <p class="font-black font-mono text-2xl leading-10 mt-2">
-          {{ voteCount }}
-        </p>
+  <!-- Voting Button -->
+  <div class="bg-slate-50 pt-5 rounded-r-xl">
+      <div class="flex flex-col w-full h-full ">
+          <button class="flex flex-initial justify-center" id="upvote" @click="voteCount++">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 " viewBox="0 0 512 512">
+              <path id="upvote" d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256c141.4 0 256-114.6 256-256S397.4 0 256 0zM382.8 246.1C380.3 252.1 374.5 256 368 256h-64v96c0 17.67-14.33 32-32 32h-32c-17.67 0-32-14.33-32-32V256h-64C137.5 256 131.7 252.1 129.2 246.1C126.7 240.1 128.1 233.3 132.7 228.7l112-112c6.248-6.248 16.38-6.248 22.62 0l112 112C383.9 233.3 385.3 240.1 382.8 246.1z"/>
+            </svg>
+          </button>
 
-        <button id="downvote" @click="voteCount--">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-14 w-14 fill-red-500"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </button>
-      </div>
+          <p class="flex flex-initial justify-center font-bold text-xl">
+            {{ voteCount }}
+          </p>
 
-      <div
-        class="inline-block mx-auto rounded-full bg-gray-300 pr-5 h-10 leading-10"
-      >
-        <img class="rounded-full float-left h-full" :src="props.avatar" />
-        <span class="font-serif ml-3 font-black">{{ props.user }}</span>
-        <p class="text-gray-600 text-xs mx-auto">{{ props.duration }} ago</p>
-      </div>
-    </div>
+          <button class="flex flex-initial justify-center" id="downvote" @click="voteCount--">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 512 512">
+              <path id="downvote" d="M256 512c141.4 0 256-114.6 256-256s-114.6-256-256-256C114.6 0 0 114.6 0 256S114.6 512 256 512zM129.2 265.9C131.7 259.9 137.5 256 144 256h64V160c0-17.67 14.33-32 32-32h32c17.67 0 32 14.33 32 32v96h64c6.469 0 12.31 3.891 14.78 9.875c2.484 5.984 1.109 12.86-3.469 17.44l-112 112c-6.248 6.248-16.38 6.248-22.62 0l-112-112C128.1 278.7 126.7 271.9 129.2 265.9z"/>
+            </svg>
+          </button>
+      </div>  
+  </div>
+
+
   </div>
 </template>
 
