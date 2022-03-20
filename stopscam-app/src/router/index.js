@@ -7,14 +7,14 @@ const router = createRouter({
       path: "/",
       component: () => import("../views/HomeView.vue"),
     },
-    // {
-    //   path: "/login",
-    //   component: () => import("../views/Test.vue"),
-    // },
-    // {
-    //   path: "/sign-in",
-    //   component: () => import("../views/SignIn.vue"),
-    // },
+    {
+      path: "/login",
+      component: () => import("../views/LoginView.vue"),
+    },
+    {
+      path: "/register",
+      component: () => import("../views/RegisterView.vue"),
+    },
     // {
     //   path: "/feed",
     //   component: () => import("../views/Feed.vue"),
