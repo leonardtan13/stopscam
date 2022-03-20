@@ -1,5 +1,5 @@
 <script setup>
-import CardComponent from "./CardComponent.vue";
+import CardComponent from "../components/CardComponent.vue";
 import {
   Dialog,
   DialogOverlay,
@@ -7,40 +7,24 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import "../index.css";
-import { ref } from "vue";
+import { ref, onBeforeMount } from "vue";
 
-const ur_selected = ref(true);
-const legit_selected = ref(false);
-const scam_selected = ref(false);
+//ENUMS FOR POST STATE
+const LEGIT = 1;
+const UNDER_REVIEW = 2;
+const SCAM = 3;
+const selected_filter = ref(UNDER_REVIEW);
 const open = ref(false);
 
-const selected_state = {
-  "text-gray-700": false,
-  "text-white": true,
-  "md:bg-teal-700": true,
+const selected_post_style = (current_state) => {
+  return selected_filter.value === current_state
+    ? ["text-white", "bg-teal-700"]
+    : ["text-gray-700"];
 };
 
-const unselected_state = {
-  "text-gray-700": true,
-  "text-white": false,
-  "md:bg-teal-700": false,
-};
-
-function resetState(type) {
-  if (type == "review") {
-    this.ur_selected = true;
-    this.legit_selected = false;
-    this.scam_selected = false;
-  } else if (type == "legit") {
-    this.ur_selected = false;
-    this.legit_selected = true;
-    this.scam_selected = false;
-  } else {
-    this.ur_selected = false;
-    this.legit_selected = false;
-    this.scam_selected = true;
-  }
-}
+onBeforeMount(() => {
+  document.body.style.backgroundColor = "#0d3939";
+})
 
 const data = [
   {
@@ -118,21 +102,20 @@ const data = [
 
 <template>
   <!-- Search bar -->
-  <div class="text-gray-600 text-base mx-auto my-5 w-2/3 h-20">
+  <div class="text-gray-600 text-base mx-auto my-5 w-2/3 h-15">
     <div class="grid grid-cols-6 gap-4 h-full">
-    
-    <img
-      class="self-center justify-self-end object-cover rounded-full w-12 h-12"
-      src="https://0.soompi.io/wp-content/uploads/2022/01/11203504/Kim-Tae-Ri2.jpg"
-      alt="Profile image"
-    />
-    <input
-      class="col-span-4 bg-white px-5 rounded-lg focus:outline-none"
-      type="text"
-      name="create"
-      placeholder="Post something to your community"
-      @click="open = true"
-    />
+      <img
+        class="self-center justify-self-end object-cover rounded-full w-12 h-12"
+        src="https://0.soompi.io/wp-content/uploads/2022/01/11203504/Kim-Tae-Ri2.jpg"
+        alt="Profile image"
+      />
+      <input
+        class="col-span-4 bg-white px-5 rounded-lg focus:outline-none"
+        type="text"
+        name="create"
+        placeholder="Post something to your community"
+        @click="open = true"
+      />
     </div>
   </div>
 
@@ -205,17 +188,15 @@ const data = [
                       <div>
                         <label
                           for="caption"
-                          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
                           >Caption</label
                         >
-                        <input
+                        <textarea
                           id="caption"
-                          type="text"
-                          name="caption"
-                          placeholder="Additional Details"
-                          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                          required
-                        />
+                          rows="4"
+                          class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          placeholder="Additional details..."
+                        ></textarea>
                       </div>
                       <div>
                         <label
@@ -285,59 +266,54 @@ const data = [
   </TransitionRoot>
 
   <!-- Page Filter -->
-  <nav
-    class="md:px-4 px-2 mx-auto my-5 w-1/3 rounded-lg"
-  >
-    <div class="container mx-auto grid grid-cols-3 justify-evenly justify-items-center">
-      <!-- <div id="mobile-menu" class="hidden w-full md:block md:w-auto"> -->
-        <div>
-          <button
-            class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xl w-full"
-            :class="ur_selected ? selected_state : unselected_state"
-            aria-current="page"
-            @click="resetState('review')"
-          >
-            Under Review
-          </button>
-        </div>
-        <div>
-          <button
-            class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xl w-full"
-            :class="legit_selected ? selected_state : unselected_state"
-            @click="resetState('legit')"
-          >
-            Legit Page
-          </button>
-        </div>
-        <div>
-          <button
-            class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xl w-full"
-            :class="scam_selected ? selected_state : unselected_state"
-            @click="resetState('scam')"
-          >
-            Scam Page
-          </button>
-        </div>
-      <!-- </div> -->
+  <nav class="md:px-4 px-2 mx-auto my-5 w-1/3 rounded-lg">
+    <div
+      class="container mx-auto grid grid-cols-3 justify-evenly justify-items-center"
+    >
+      <div>
+        <button
+          class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xs sm:text-lg w-full"
+          :class="selected_post_style(UNDER_REVIEW)"
+          aria-current="page"
+          @click="selected_filter = UNDER_REVIEW"
+        >
+          Under Review
+        </button>
+      </div>
+      <div>
+        <button
+          class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xs sm:text-lg w-full"
+          :class="selected_post_style(LEGIT)"
+          @click="selected_filter = LEGIT"
+        >
+          Legit Page
+        </button>
+      </div>
+      <div>
+        <button
+          class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xs sm:text-lg w-full"
+          :class="selected_post_style(SCAM)"
+          @click="selected_filter = SCAM"
+        >
+          Scam Page
+        </button>
+      </div>
     </div>
   </nav>
 
-
   <div class="w-2/3 mx-auto bg-white rounded-xl">
-    
     <!-- Nav Filter -->
     <ul class="w-5/6 flex gap-2 mx-auto h-18">
       <li class="px-5 pt-5">
         <a
-          class="font-sans text-xl inline-block default-text"
+          class="font-sans text-md sm:text-xl inline-block default-text"
           href="#"
           >All</a
         >
-        
       </li>
       <li class="px-5 pt-5">
         <a
-          class="font-sans text-xl inline-block default-text"
+          class="font-sans text-md sm:text-xl inline-block default-text"
           href="#"
           >Top</a
         >
@@ -359,3 +335,21 @@ const data = [
     />
   </div>
 </template>
+
+<style scoped>
+input:checked ~ .dot {
+  transform: translateX(100%);
+  background-color: red;
+}
+
+.default-text {
+  color: #878a8c;
+  text-align: center;
+  vertical-align: bottom;
+  border-bottom: 2px solid transparent;
+}
+.default-text:hover {
+  color: #0d3939;
+  border-bottom-color: #0d3939;
+}
+</style>

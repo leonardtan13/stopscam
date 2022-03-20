@@ -1,39 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-body {
-  background-color: #0d3939;
-}
-
-input:checked ~ .dot {
-  transform: translateX(100%);
-  background-color: red;
-}
-
-.default-text {
-  color: #878A8C;
-  text-align: center;
-  vertical-align: bottom;
-  border-bottom: 2px solid transparent;
-}
-.default-text:hover {
-  color: #0d3939;
-  border-bottom-color: #0d3939;
-}
-
-
-/* Vote Buttons */
-#upvote {
-  fill: #cdcdcd;
-}
-#upvote:hover {
-  fill: #90d998;
-}
-
-#downvote {
-  fill: #cdcdcd;
-}
-#downvote:hover {
-  fill: #ff585b;
-}
