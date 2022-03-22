@@ -1,7 +1,7 @@
 import { db, firebase } from "../firebase";
 import { reactive } from "vue";
 
-interface Post {
+export interface Post {
   id: string;
   date: Date;
   description: string;
