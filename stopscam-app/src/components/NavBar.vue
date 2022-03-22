@@ -8,7 +8,6 @@ const toggleNavbar = () => {
 };
 
 defineProps({
-  // take in login or register
   loginStatus: Boolean,
 });
 
@@ -55,9 +54,8 @@ defineEmits({
               >
             </button>
           </li>
-          <span v-if="loginStatus">
-            <li class="nav-item">
-              <button  @click="$emit('logout', true)">
+            <li v-show="loginStatus" class="nav-item">
+              <button @click="$emit('logout', true)">
                 <router-link
                   class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
                   to="/"
@@ -65,9 +63,7 @@ defineEmits({
                 >
               </button>
             </li>
-          </span>
-          <span v-else>
-            <li class="nav-item">
+            <li v-show='!loginStatus' class="nav-item">
               <button>
                 <router-link
                   class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
@@ -76,7 +72,7 @@ defineEmits({
                 >
               </button>
             </li>
-            <li class="nav-item">
+            <li v-show='!loginStatus' class="nav-item" >
               <button>
                 <router-link
                   class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
@@ -85,7 +81,6 @@ defineEmits({
                 >
               </button>
             </li>
-          </span>
         </ul>
       </div>
     </div>
