@@ -49,7 +49,7 @@ const toggleNavbar = () => {
             <button>
               <router-link
                 class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-                to="/"
+                to="/login"
                 >Log In</router-link
               >
             </button>
@@ -58,7 +58,7 @@ const toggleNavbar = () => {
             <button>
               <router-link
                 class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-                to="/"
+                to="/register"
                 >Sign Up</router-link
               >
             </button>
