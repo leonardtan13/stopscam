@@ -6,6 +6,16 @@ const showMenu = ref(false);
 const toggleNavbar = () => {
   showMenu.value = !showMenu.value;
 };
+
+defineProps({
+  // take in login or register
+  loginStatus: Boolean,
+});
+
+defineEmits({
+  logout: Boolean,
+});
+
 </script>
 
 <template>
@@ -45,24 +55,37 @@ const toggleNavbar = () => {
               >
             </button>
           </li>
-          <li class="nav-item">
-            <button>
-              <router-link
-                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-                to="/"
-                >Log In</router-link
-              >
-            </button>
-          </li>
-          <li class="nav-item">
-            <button>
-              <router-link
-                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-                to="/"
-                >Sign Up</router-link
-              >
-            </button>
-          </li>
+          <span v-if="loginStatus">
+            <li class="nav-item">
+              <button  @click="$emit('logout', true)">
+                <router-link
+                  class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                  to="/"
+                  >Log Out</router-link
+                >
+              </button>
+            </li>
+          </span>
+          <span v-else>
+            <li class="nav-item">
+              <button>
+                <router-link
+                  class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                  to="/login"
+                  >Log In</router-link
+                >
+              </button>
+            </li>
+            <li class="nav-item">
+              <button>
+                <router-link
+                  class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                  to="/register"
+                  >Sign Up</router-link
+                >
+              </button>
+            </li>
+          </span>
         </ul>
       </div>
     </div>
