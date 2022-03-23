@@ -15,6 +15,10 @@ const router = createRouter({
       path: "/register",
       component: () => import("../views/RegisterView.vue"),
     },
+    {
+      path: "/profile",
+      component: () => import("../views/ProfileView.vue"),
+    },
     // {
     //   path: "/feed",
     //   component: () => import("../views/Feed.vue"),
