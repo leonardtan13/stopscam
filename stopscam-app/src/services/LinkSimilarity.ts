@@ -9,8 +9,8 @@ export const findSimilarityInPosts = (
   posts: Map<string, Post>,
   link: string
 ) => {
-  const targets: string[] = Array.from(posts.values()).map( (post: Post) => {
-    return post.link
-  })
+  const targets: string[] = Array.from(posts.values()).map((post: Post) => {
+    return post.link;
+  });
   return stringSimilarity.findBestMatch(link, targets);
 };

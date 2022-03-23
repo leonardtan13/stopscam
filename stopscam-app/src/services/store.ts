@@ -131,3 +131,32 @@ export const downvotePost = (
       .catch((err) => reject(err));
   });
 };
+
+export const getAllPendingReview = (posts: Map<string, Post>): Post[] => {
+  return Array.from(posts.values()).filter((post) => {
+    post.isUnderReview === true;
+  });
+};
+
+export const getAllLegitPosts = (posts: Map<string, Post>): Post[] => {
+  return Array.from(posts.values()).filter((post) => {
+    post.isLegitSite === true;
+  });
+};
+
+export const getAllScamPosts = (posts: Map<string, Post>): Post[] => {
+  return Array.from(posts.values()).filter((post) => {
+    post.isLegitSite === false;
+  });
+};
+
+export const getTopPostsWithMinRatio = (
+  minRatio: number,
+  posts: Map<string, Post>
+): Map<string, Post> => {
+  return new Map(
+    [...posts].filter(([id, post]) => {
+      post.upvoteCount / (post.upvoteCount + post.downvoteCount) > minRatio;
+    })
+  );
+};
