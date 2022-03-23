@@ -99,7 +99,6 @@ function formValid() {
 }
 
 const loading = ref(false);
-
 const database = db.collection("/users");
 
 const Register = () => {
