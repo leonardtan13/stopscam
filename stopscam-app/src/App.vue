@@ -34,4 +34,7 @@ const signOut = () => {
 
 <style>
 @import "./assets/styles/variables.css";
+body {
+  background-color: #0d3939;
+}
 </style>
