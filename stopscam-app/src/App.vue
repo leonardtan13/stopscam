@@ -26,7 +26,7 @@ const signOut = () => {
 
 <template>
   <div>
-    <NavBar :loginStatus="isLoggedIn" @logout="signOut()" />
+    <NavBar :login-status="isLoggedIn" @logout="signOut()" />
 
     <router-view></router-view>
   </div>

@@ -19,7 +19,7 @@ const router = createRouter({
       path: "/help",
       component: () => import("../views/HelpView.vue"),
     },
-    
+
     // {
     //   path: "/feed",
     //   component: () => import("../views/Feed.vue"),
