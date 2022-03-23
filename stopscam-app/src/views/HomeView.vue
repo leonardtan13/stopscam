@@ -19,7 +19,22 @@ const handleFileUpload = (event) => {
 };
 
 const submitFile = () => {
-  uploadFiletoS3("Leonard", file.value.name, file.value);
+  uploadFiletoS3(
+    "KD7DAHDS74HFD",
+    file.value.name,
+    file.value,
+    //Passing in credentials as TypeScript does not recognise import.meta VITE syntax (need to workaround with tsconfig.js)
+    import.meta.env.VITE_AWSAccessKeyId,
+    import.meta.env.VITE_AWSSecretKey,
+    import.meta.env.VITE_AWSBucket
+  )
+    .then((response) => {
+      console.log(response);
+      //response: https://stopscam.s3.amazonaws.com/KD7DAHDS74HFD/59b74fe9-b98e-4881-854d-539f9fe4eda4/Timetable.png
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 </script>
 

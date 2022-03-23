@@ -1,6 +1,7 @@
 import { db, firebase } from "../firebase";
 import { reactive } from "vue";
 import AWS from "aws-sdk";
+import { v4 as uuidv4 } from 'uuid';
 
 export interface Post {
   id: string;
@@ -168,4 +169,71 @@ export const getTopPostsWithMinRatio = (
       post.upvoteCount / (post.upvoteCount + post.downvoteCount) > minRatio;
     })
   );
+}
+const updatePostStatus = (postId: string, proportion: number): void => {
+  const post = store.posts.get(postId);
+  const verified_threshold = 50;
+
+  if (post.upvoteCount + post.downvoteCount < verified_threshold) {
+    console.log(
+      `Post did not hit minimum verification mandate of ${verified_threshold}`
+    );
+    return;
+  }
+
+  if (!post.isUnderReview) {
+    console.log("Post is already verified");
+    return;
+  }
+
+  if (
+    post.upvoteCount / (post.upvoteCount + post.downvoteCount) >=
+    proportion
+  ) {
+    postsRef.doc(postId).update({
+      isUnderReview: false,
+    });
+    console.log("Post Status Updated");
+    return;
+  }
+
+  deletePost(postId)
+    .then(() => {
+      console.log(
+        `Post deleted as it failed to meet proportion of ${proportion}`
+      );
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const uploadFiletoS3 = (
+  userId: string,
+  fileName: string,
+  file: File,
+  accessKeyId: string,
+  secretAccessKey: string,
+  bucket: string
+): Promise<string> => {
+  const s3 = new AWS.S3({
+    accessKeyId: accessKeyId,
+    secretAccessKey: secretAccessKey,
+  });
+  const params = {
+    Bucket: bucket,
+    Key: `${userId}/${uuidv4()}/${fileName}`,
+    Body: file,
+  };
+
+  return new Promise((resolve, reject) => {
+    s3.upload(params, (err, data) => {
+      if (err) {
+        return reject(err);
+      } else {
+        console.log("File Uploaded");
+        return resolve(data.Location);
+      }
+    });
+  });
 };
