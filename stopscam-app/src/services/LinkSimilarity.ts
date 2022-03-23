@@ -9,8 +9,21 @@ export const findSimilarityInPosts = (
   posts: Map<string, Post>,
   link: string
 ) => {
-  const targets: string[] = Array.from(posts.values()).map((post: Post) => {
-    return post.link;
+  const targets: string[] = [];
+  const identifiers: Map<string, string> = new Map();
+
+  Array.from(posts.values()).forEach((post: Post) => {
+    targets.push(post.link);
+    identifiers[post.link] = post.id;
   });
-  return stringSimilarity.findBestMatch(link, targets);
+
+  const results = stringSimilarity.findBestMatch(link, targets);
+
+  results["ratings"] = results["ratings"].map((result) => {
+    result["id"] = identifiers[result["target"]];
+    return result;
+  });
+
+  results["bestMatch"]["id"] = identifiers[results["bestMatch"]["target"]];
+  return results;
 };

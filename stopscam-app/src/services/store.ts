@@ -1,5 +1,6 @@
 import { db, firebase } from "../firebase";
 import { reactive } from "vue";
+import AWS from "aws-sdk";
 
 export interface Post {
   id: string;
@@ -66,24 +67,30 @@ export const documentToPost = (doc: firebase.firestore.DocumentData): Post => {
   return post;
 };
 
-export const createPost = (post: Post) => {
-  const newPost = postsRef.doc();
-  newPost
-    .set(post)
-    .then(() => {
-      console.log("created new post");
-    })
-    .catch((err) => console.log(err));
+export const createPost = (post: Post): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const newPost = postsRef.doc();
+    newPost
+      .set(post)
+      .then(() => {
+        console.log("created new post");
+        resolve("Post Created");
+      })
+      .catch((err) => reject(err));
+  });
 };
 
-export const deletePost = (postId: string) => {
-  postsRef
-    .doc(postId)
-    .delete()
-    .then(() => {
-      console.log("deleted: ", postId);
-    })
-    .catch((err) => console.log(err));
+export const deletePost = (postId: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    postsRef
+      .doc(postId)
+      .delete()
+      .then(() => {
+        console.log("deleted: ", postId);
+        resolve("Post Deleted");
+      })
+      .catch((err) => reject(err));
+  });
 };
 
 export const upvotePost = (
@@ -103,6 +110,7 @@ export const upvotePost = (
         upvotedBy: firebase.firestore.FieldValue.arrayUnion(upvoterId),
       })
       .then(() => {
+        updatePostStatus(postId, 0.8);
         resolve("upvoted");
       })
       .catch((err) => reject(err));
@@ -126,6 +134,7 @@ export const downvotePost = (
         downvotedBy: firebase.firestore.FieldValue.arrayUnion(downvoterId),
       })
       .then(() => {
+        updatePostStatus(postId, 0.8);
         resolve("downvoted");
       })
       .catch((err) => reject(err));
