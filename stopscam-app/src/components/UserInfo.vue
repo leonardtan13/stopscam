@@ -8,22 +8,57 @@ defineProps({
 
 <template>
   <body>
-    <div class="container mx-auto my-10 p-6 rounded-2xl w-3/4 sm:w-full">
-      <h1 class="mb-2 text-slate-300 text-lg indent-10 ml-3 font-light sm:text-2xl sm:ml-10">
-        {{ userName }}
-      </h1>
-      <h2 class="mb-2 text-slate-300 text-sm indent-10 ml-3 font-light sm:text-lg sm:ml-10">
-        Reputation Score: {{ userRepScore }}
-      </h2>
-      <p class="text-slate-300 text-xs ml-3 sm:text-sm">
-        {{ userDescription }}
-      </p>
+    <!-- User Image -->
+    <div class="container mx-auto mt-20 my-10 sm:w-full">
+      <div class="grid place-content-center">
+        <img src="https://images.saymedia-content.com/.image/c_limit%2Ccs_srgb%2Cq_auto:eco%2Cw_620/MTc0NDI5MTc5NzI1NDg5Nzk4/top-10-greatest-leonardo-dicaprio-movies.webp"
+          class="self-center justify-self-end object-cover rounded-full w-48 h-48"
+        >
+     </div>
     </div>
+
+    <!-- User Profile -->
+    <div class="container mx-auto my-10 p-6 rounded-xl w-3/4 sm:w-2/3 bg-20">
+      <div class="grid grid-flow-row auto-rows-max gap-6">
+        
+        <h1
+          class="text-slate-300 text-xl text-center font-sm sm:text-3xl font-semibold"
+        >
+          {{ userName }}
+        </h1>
+
+        <div class="grid mx-auto bg-white w-32 h-32 rounded-lg">
+          <h2
+            class="text-slate-700 text-center text-md font-medium sm:text-xl mt-2"
+          >
+            Reputation Score: 
+           
+          </h2>
+          <h1 class="text-slate-700 text-center text-lg font-semibold sm:text-3xl"
+          >
+            {{ userRepScore }}
+          </h1>
+        </div>
+
+        <p class="text-slate-300 text-center text-sm sm:text-xl font-normal">
+          {{ userDescription }}
+        </p>
+
+      </div>
+    </div>
+
+    <!-- User Posts -->
+    <div class="container mx-auto my-10 p-6 rounded-xl w-3/4 sm:w-2/3 bg-white">
+      <div class="grid grid-flow-row auto-rows-max gap-6">
+       Retrieve from feed
+      </div>
+    </div>
+
   </body>
 </template>
 
 <style scoped>
-div {
-    background-color: #314E4E;
+.bg-20 {
+  background-color: #314e4e;
 }
 </style>
