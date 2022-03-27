@@ -11,16 +11,16 @@ defineProps({
     <!-- User Image -->
     <div class="container mx-auto mt-20 my-10 sm:w-full">
       <div class="grid place-content-center">
-        <img src="https://images.saymedia-content.com/.image/c_limit%2Ccs_srgb%2Cq_auto:eco%2Cw_620/MTc0NDI5MTc5NzI1NDg5Nzk4/top-10-greatest-leonardo-dicaprio-movies.webp"
+        <img
+          src="https://images.saymedia-content.com/.image/c_limit%2Ccs_srgb%2Cq_auto:eco%2Cw_620/MTc0NDI5MTc5NzI1NDg5Nzk4/top-10-greatest-leonardo-dicaprio-movies.webp"
           class="self-center justify-self-end object-cover rounded-full w-48 h-48"
         >
-     </div>
+      </div>
     </div>
 
     <!-- User Profile -->
     <div class="container mx-auto my-10 p-6 rounded-xl w-3/4 sm:w-2/3 bg-20">
       <div class="grid grid-flow-row auto-rows-max gap-6">
-        
         <h1
           class="text-slate-300 text-xl text-center font-sm sm:text-3xl font-semibold"
         >
@@ -31,10 +31,10 @@ defineProps({
           <h2
             class="text-slate-700 text-center text-md font-medium sm:text-xl mt-2"
           >
-            Reputation Score: 
-           
+            Reputation Score:
           </h2>
-          <h1 class="text-slate-700 text-center text-lg font-semibold sm:text-3xl"
+          <h1
+            class="text-slate-700 text-center text-lg font-semibold sm:text-3xl"
           >
             {{ userRepScore }}
           </h1>
@@ -43,17 +43,15 @@ defineProps({
         <p class="text-slate-300 text-center text-sm sm:text-xl font-normal">
           {{ userDescription }}
         </p>
-
       </div>
     </div>
 
     <!-- User Posts -->
     <div class="container mx-auto my-10 p-6 rounded-xl w-3/4 sm:w-2/3 bg-white">
       <div class="grid grid-flow-row auto-rows-max gap-6">
-       Retrieve from feed
+        Retrieve from feed
       </div>
     </div>
-
   </body>
 </template>
 
