@@ -4,10 +4,6 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: "/",
-      component: () => import("../views/HomeView.vue"),
-    },
-    {
       path: "/login",
       component: () => import("../views/LoginView.vue"),
     },
@@ -15,10 +11,10 @@ const router = createRouter({
       path: "/register",
       component: () => import("../views/RegisterView.vue"),
     },
-    // {
-    //   path: "/feed",
-    //   component: () => import("../views/Feed.vue"),
-    // },
+    {
+      path: "/feed",
+      component: () => import("../views/FeedView.vue"),
+    },
   ],
 });
 
