@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive } from "vue";
+import { reactive } from "vue";
 import userInfo from "../components/UserInfo.vue";
 
 const userObj = reactive({
@@ -12,9 +12,9 @@ const userObj = reactive({
 
 <template>
   <userInfo
-    :userName="userObj.name"
-    :userRepScore="userObj.repScore"
-    :userDescription="userObj.description"
+    :user-name="userObj.name"
+    :user-rep-score="userObj.repScore"
+    :user-description="userObj.description"
   >
   </userInfo>
 </template>
