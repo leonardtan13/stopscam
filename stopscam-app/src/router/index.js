@@ -4,10 +4,6 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: "/",
-      component: () => import("../views/HomeView.vue"),
-    },
-    {
       path: "/login",
       component: () => import("../views/LoginView.vue"),
     },
@@ -19,11 +15,10 @@ const router = createRouter({
       path: "/help",
       component: () => import("../views/HelpView.vue"),
     },
-
-    // {
-    //   path: "/feed",
-    //   component: () => import("../views/Feed.vue"),
-    // },
+    {
+      path: "/feed",
+      component: () => import("../views/FeedView.vue"),
+    },
   ],
 });
 
