@@ -24,7 +24,7 @@ const selected_post_style = (current_state) => {
 
 onBeforeMount(() => {
   document.body.style.backgroundColor = "#0d3939";
-})
+});
 
 const data = [
   {

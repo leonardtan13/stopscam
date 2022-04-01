@@ -1,18 +1,17 @@
 <script setup>
-import { ref, reactive } from "vue";
+import { ref } from "vue";
 
 const div1 = ref(false);
 const div2 = ref(false);
 const div3 = ref(false);
 
 function goto(refName) {
-  console.log(refName);
   if (refName == "div1") {
-    div1.value = !div1.value;
+    div1.value = true;
   } else if (refName == "div2") {
-    div2.value = !div2.value;
+    div2.value = true;
   } else {
-    div3.value = !div3.value;
+    div3.value = true;
   }
   window.scrollTo(0, document.getElementById(refName).offsetTop);
 }
