@@ -1,7 +1,7 @@
 import { db, firebase } from "../firebase";
 import { reactive } from "vue";
 import AWS from "aws-sdk";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export interface Post {
   id: string;
