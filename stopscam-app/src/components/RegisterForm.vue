@@ -65,15 +65,15 @@
             </button>
           </div>
         </form>
-        <div class='flex items-center justify-center pt-5'>
-          <p class='text-xs'>
+        <div class="flex items-center justify-center pt-5">
+          <p class="text-xs">
             Not a member yet?
             <span>
               <a
                 href="#"
                 class="font-small text-green-600 hover:text-green-500"
               >
-              Sign up
+                Sign up
               </a>
             </span>
           </p>

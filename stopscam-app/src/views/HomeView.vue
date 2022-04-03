@@ -1,5 +1,5 @@
 <script setup>
-import { store, uploadFiletoS3 } from "../services/store";
+import { store, uploadFiletoS3, upvotePost } from "../services/store";
 import { findSimilarityInPosts } from "../services/LinkSimilarity";
 import { ref } from "vue";
 
@@ -36,6 +36,8 @@ const submitFile = () => {
       console.log(error);
     });
 };
+
+//Test Threshold
 </script>
 
 <template>
@@ -44,6 +46,7 @@ const submitFile = () => {
   text: <input v-model="link" @change="getSimilarity(link)" />
 
   <h2>Similarity: {{ similarity }}</h2>
+  <button @click="upvotePost('71euK9YfaU9lr5mv3yHU', '49')">Upvote</button>
 
   <div class="container">
     <div>

@@ -1,7 +1,6 @@
 import { db, firebase } from "../firebase";
 import { reactive } from "vue";
 import AWS from "aws-sdk";
-import { v4 as uuidv4 } from "uuid";
 
 export interface Post {
   id: string;
@@ -16,6 +15,12 @@ export interface Post {
   images: string[];
   upvoteCount: number;
   downvoteCount: number;
+}
+
+//TypeScript does not have set data type, must push array
+export interface FireBasePost extends Omit<Post, "downvotedBy" | "upvotedBy"> {
+  downvotedBy: string[];
+  upvotedBy: string[];
 }
 
 export const store = reactive({
@@ -68,13 +73,18 @@ export const documentToPost = (doc: firebase.firestore.DocumentData): Post => {
   return post;
 };
 
-export const createPost = (post: Post): Promise<string> => {
+export const createPost = (post: FireBasePost): Promise<string> => {
   return new Promise((resolve, reject) => {
     const newPost = postsRef.doc();
+
+    //Firebase does not recognise custom types, must convert back to vanilla javascript objects (string[] -> array)
+    post.downvotedBy = [...post.downvotedBy];
+    post.upvotedBy = [...post.upvotedBy];
+
     newPost
       .set(post)
       .then(() => {
-        console.log("created new post");
+        console.log("Created new post");
         resolve("Post Created");
       })
       .catch((err) => reject(err));
@@ -169,7 +179,7 @@ export const getTopPostsWithMinRatio = (
       post.upvoteCount / (post.upvoteCount + post.downvoteCount) > minRatio;
     })
   );
-}
+};
 const updatePostStatus = (postId: string, proportion: number): void => {
   const post = store.posts.get(postId);
   const verified_threshold = 50;
@@ -210,6 +220,7 @@ const updatePostStatus = (postId: string, proportion: number): void => {
 
 export const uploadFiletoS3 = (
   userId: string,
+  postId: string,
   fileName: string,
   file: File,
   accessKeyId: string,
@@ -222,7 +233,7 @@ export const uploadFiletoS3 = (
   });
   const params = {
     Bucket: bucket,
-    Key: `${userId}/${uuidv4()}/${fileName}`,
+    Key: `${userId}/${postId}/${fileName}`,
     Body: file,
   };
 

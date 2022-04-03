@@ -1,5 +1,7 @@
 <script setup>
 import CardComponent from "../components/CardComponent.vue";
+import { v4 as uuidv4 } from "uuid";
+
 import {
   Dialog,
   DialogOverlay,
@@ -8,13 +10,23 @@ import {
 } from "@headlessui/vue";
 import "../index.css";
 import { ref, onBeforeMount } from "vue";
+import { createPost, uploadFiletoS3 } from "../services/store";
 
 //ENUMS FOR POST STATE
 const LEGIT = 1;
 const UNDER_REVIEW = 2;
 const SCAM = 3;
+
+//STATE VARAIABLES
 const selected_filter = ref(UNDER_REVIEW);
-const open = ref(false);
+const isOpen = ref(false);
+const postSuccess = ref(false);
+
+//FORM VARIABLES
+const link = ref("");
+const caption = ref("");
+const file = ref("");
+const isScam = ref(false);
 
 const selected_post_style = (current_state) => {
   return selected_filter.value === current_state
@@ -25,6 +37,56 @@ const selected_post_style = (current_state) => {
 onBeforeMount(() => {
   document.body.style.backgroundColor = "#0d3939";
 });
+
+const handleFileUpload = (event) => {
+  file.value = event.target.files[0];
+};
+
+const submitFile = () => {
+  isOpen.value = false;
+  const postID = uuidv4();
+  const userID = "KD7DAHDS74HFD"; //hard-code for now
+
+  uploadFiletoS3(
+    userID,
+    postID,
+    file.value.name,
+    file.value,
+    import.meta.env.VITE_AWSAccessKeyId,
+    import.meta.env.VITE_AWSSecretKey,
+    import.meta.env.VITE_AWSBucket
+  )
+    .then((response) => {
+      const post = {
+        id: postID,
+        date: new Date(),
+        description: caption.value,
+        downvotedBy: [],
+        upvotedBy: [],
+        isLegitSite: !isScam.value,
+        isUnderReview: true,
+        link: link.value,
+        postedBy: userID,
+        images: [response],
+        upvoteCount: 0,
+        downvoteCount: 0,
+      };
+
+      createPost(post)
+        .then((response) => {
+          postSuccess.value = true;
+          caption.value = "";
+          isScam.value = false;
+          link.value = "";
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 const data = [
   {
@@ -101,6 +163,48 @@ const data = [
 </script>
 
 <template>
+  <!--Post Success Alert-->
+  <div
+    v-if="postSuccess"
+    class="relative bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md"
+    role="alert"
+  >
+    <div class="flex">
+      <div class="py-1">
+        <svg
+          class="fill-current h-6 w-6 text-teal-500 mr-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"
+          />
+        </svg>
+      </div>
+      <div>
+        <p class="font-bold">Your Post has been successfully uploaded</p>
+        <p class="text-sm">
+          Do refresh the page to view the latest posts in your feed.
+        </p>
+        <span
+          class="absolute top-0 bottom-0 right-0 px-4 py-3"
+          @click="postSuccess = false"
+        >
+          <svg
+            class="fill-current h-6 w-6 text-teal-500"
+            role="button"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+          >
+            <title>Close</title>
+            <path
+              d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"
+            />
+          </svg>
+        </span>
+      </div>
+    </div>
+  </div>
   <!-- Search bar -->
   <div class="text-gray-600 text-base mx-auto my-5 w-2/3 h-15">
     <div class="grid grid-cols-6 gap-4 h-full">
@@ -114,17 +218,17 @@ const data = [
         type="text"
         name="create"
         placeholder="Post something to your community"
-        @click="open = true"
+        @click="isOpen = true"
       />
     </div>
   </div>
 
   <!-- Form Modal -->
-  <TransitionRoot as="template" :show="open">
+  <TransitionRoot as="template" :show="isOpen">
     <Dialog
       as="div"
       class="fixed z-10 inset-0 overflow-y-auto"
-      @close="open = false"
+      @close="isOpen = false"
     >
       <div
         class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
@@ -178,6 +282,7 @@ const data = [
                         >
                         <input
                           id="link"
+                          v-model="link"
                           type="text"
                           name="link"
                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
@@ -193,6 +298,7 @@ const data = [
                         >
                         <textarea
                           id="caption"
+                          v-model="caption"
                           rows="4"
                           class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           placeholder="Additional details..."
@@ -200,15 +306,15 @@ const data = [
                       </div>
                       <div>
                         <label
-                          for="formFileMultiple"
+                          for="formFile"
                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                           >Screenshots</label
                         >
                         <input
-                          id="formFileMultiple"
+                          id="formFile"
                           class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                           type="file"
-                          multiple
+                          @change="handleFileUpload($event)"
                         />
                       </div>
 
@@ -222,6 +328,7 @@ const data = [
                           <div class="relative">
                             <input
                               id="toogle"
+                              v-model="isScam"
                               type="checkbox"
                               class="sr-only"
                             />
@@ -247,14 +354,14 @@ const data = [
                 ref="cancelButtonRef"
                 type="button"
                 class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                @click="open = false"
+                @click="isOpen = false"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-                @click="open = false"
+                @click="submitFile()"
               >
                 Post
               </button>
