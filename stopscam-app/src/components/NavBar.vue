@@ -14,7 +14,6 @@ defineProps({
 defineEmits({
   logout: Boolean,
 });
-
 </script>
 
 <template>
@@ -54,33 +53,33 @@ defineEmits({
               >
             </button>
           </li>
-            <li v-show="loginStatus" class="nav-item">
-              <button @click="$emit('logout', true)">
-                <router-link
-                  class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-                  to="/"
-                  >Log Out</router-link
-                >
-              </button>
-            </li>
-            <li v-show='!loginStatus' class="nav-item">
-              <button>
-                <router-link
-                  class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-                  to="/login"
-                  >Log In</router-link
-                >
-              </button>
-            </li>
-            <li v-show='!loginStatus' class="nav-item" >
-              <button>
-                <router-link
-                  class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-                  to="/register"
-                  >Sign Up</router-link
-                >
-              </button>
-            </li>
+          <li v-show="loginStatus" class="nav-item">
+            <button @click="$emit('logout', true)">
+              <router-link
+                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                to="/"
+                >Log Out</router-link
+              >
+            </button>
+          </li>
+          <li v-show="!loginStatus" class="nav-item">
+            <button>
+              <router-link
+                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                to="/login"
+                >Log In</router-link
+              >
+            </button>
+          </li>
+          <li v-show="!loginStatus" class="nav-item">
+            <button>
+              <router-link
+                class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                to="/register"
+                >Sign Up</router-link
+              >
+            </button>
+          </li>
         </ul>
       </div>
     </div>
