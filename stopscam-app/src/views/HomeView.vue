@@ -1,17 +1,41 @@
 <script setup>
 import { store } from "../services/store";
+import ErrorMsg from "../components/ErrorMsg.vue";
 // import { findSimilarityInPosts } from "../services/LinkSimilarity";
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 
-const link = ref("");
+const loading = ref(false);
+const state = reactive({
+  link: "",
+});
+const error = reactive({
+  link: [false, ""],
+});
 
 const similarity = ref({});
-
 // const getSimilarity = (link) => {
 //   const posts = store.posts;
 //   // console.log(posts)
 //   similarity.value = findSimilarityInPosts(posts, link);
 // };
+function inputValidation() {
+  let link_input = state.link ;
+  // check if there is a link
+  if (link_input.length > 0) {
+    error.link = [false, ""];
+    return;
+  } else {
+    error.link =  [true, "empty"];
+    return;
+  }
+}
+
+const submit = () =>  {
+  loading.value = true;
+  console.log(state.link);
+  inputValidation();
+
+}
 </script>
 
 <template>
@@ -30,7 +54,7 @@ const similarity = ref({});
         </div>
         <div class="mt-4 w-3/4 h-20">
           <input
-            v-model="link"
+            v-model="state.link"
             class="p-5 w-full h-full rounded-xl font-medium text-xl"
             placeholder="http://stopscam.com"
           />
@@ -39,9 +63,20 @@ const similarity = ref({});
           <button
             id="btn-submit"
             class="p-4 w-full rounded-2xl font-bold text-2xl"
+            @click='submit()'
           >
             Submit
           </button>
+        </div>
+        <div 
+          v-show="error.link[0]"
+          :class= "error.link[0] ? 'bg-rose-200 rounded-2xl py-4 px-5 m-4 text-center' : ''" >
+          <ErrorMsg
+                    class ="ml-0  text-base"
+                    v-if="error.link[0]"
+                    id="link"
+                    :error="error.link[1]"
+                  />
         </div>
       </div>
     </div>
