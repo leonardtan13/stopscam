@@ -12,6 +12,7 @@ const isLoggedIn = ref(true);
 auth.onAuthStateChanged(function (user) {
   if (user) {
     console.log(user);
+    console.log(user.uid);
     isLoggedIn.value = true;
   } else {
     isLoggedIn.value = false;
