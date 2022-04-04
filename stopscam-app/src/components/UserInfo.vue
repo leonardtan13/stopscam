@@ -3,6 +3,7 @@ defineProps({
   userName: String,
   userRepScore: Number,
   userDescription: String,
+  userPicURL: String,
 });
 
 const randBg = {
@@ -36,27 +37,35 @@ function displayName(userName) {
     return initials
 }
 
-function formatDP() {
-  var rand = Math.floor(Math.random() * 8)
-  return "grid content-center mx-auto rounded-full border-white w-40 h-40" + " " + randBg[rand]
+function formatDP(picURL, userName) {
+  if (!picURL) {
+    var rand = Math.floor(Math.random() * 8)
+    let result = '<div '
+    result += `class= "grid content-center mx-auto 
+                      rounded-full w-40 h-40 ` + randBg[rand] + ` 
+                      hover:border-4 hover:border-slate-500">
+                <p
+                  class="text-white font-mono text-center text-6xl antialiased font-light hover:text-slate-300"
+                >     
+                ` + displayName(userName) + `</p>
+                </div>`
+    return result
+  }
+}
+
+function edit(userName) {
+  console.log(userName)
 }
 </script>
 
 <template>
   <body>
     <!-- User Image -->
-    <div class="container mx-auto mt-20 my-10 sm:w-full">
-      <div :class="formatDP()">
-        <p 
-          class="text-white font-mono text-center text-6xl antialiased font-light"
-        > 
-        {{ displayName(userName) }} 
-        </p>
-        <!-- <img
-        //   src="https://images.saymedia-content.com/.image/c_limit%2Ccs_srgb%2Cq_auto:eco%2Cw_620/MTc0NDI5MTc5NzI1NDg5Nzk4/top-10-greatest-leonardo-dicaprio-movies.webp"
-        //   class="self-center justify-self-end object-cover rounded-full w-48 h-48"
-        // /> -->
-
+    <div class="container mx-auto mt-20 my-10 sm:w-full ">
+      <div 
+        @click='edit(userName)'
+        v-html="formatDP(userPicURL,userName)" 
+      >
       </div>
     </div>
 
