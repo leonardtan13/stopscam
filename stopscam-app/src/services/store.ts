@@ -62,7 +62,6 @@ export const enableUpdates = () =>
       }
     });
   });
-};
 
 // convert document to post type
 export const documentToPost = (doc: firebase.firestore.DocumentData): Post => {
