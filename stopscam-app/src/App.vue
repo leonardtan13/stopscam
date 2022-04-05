@@ -26,7 +26,7 @@ const signOut = () => {
 
 <template>
   <div>
-    <NavBar :loginStatus="isLoggedIn" @logout="signOut()" />
+    <NavBar :login-status="isLoggedIn" @logout="signOut()" />
 
     <router-view></router-view>
   </div>
@@ -34,4 +34,7 @@ const signOut = () => {
 
 <style>
 @import "./assets/styles/variables.css";
+body {
+  background-color: #0d3939;
+}
 </style>

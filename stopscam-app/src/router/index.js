@@ -12,6 +12,10 @@ const router = createRouter({
       component: () => import("../views/RegisterView.vue"),
     },
     {
+      path: "/help",
+      component: () => import("../views/HelpView.vue"),
+    },
+    {
       path: "/feed",
       component: () => import("../views/FeedView.vue"),
     },
