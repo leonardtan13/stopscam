@@ -6,6 +6,39 @@ import {
   retrieveNetVoteCount,
 } from "../services/store";
 import "../index.css";
+import { auth } from "../firebase";
+import { useRouter } from "vue-router";
+import { store } from "../services/store";
+
+// console.log(auth.currentUser.uid)
+
+const router = useRouter();
+
+const handleUpvote = async (postId) => {
+  if (auth.currentUser === null) {
+    router.push({ path: "/login" });
+  }
+
+  // console.log("upvoting")
+  try {
+    const res = await upvotePost(postId, auth.currentUser.uid);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const handleDownvote = async (postId) => {
+  if (auth.currentUser === null) {
+    router.push({ path: "/login" });
+  }
+
+  // console.log("upvoting")
+  try {
+    const res = await downvotePost(postId, auth.currentUser.uid);
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 const props = defineProps([
   "postId",
@@ -61,7 +94,12 @@ const getDuration = (datePosted) => {
             />
             <div class="flex-col my-auto w-full">
               <div class="font-sans ml-3 font-bold">
-                {{ mock_user_info[props.pointer][0] }}
+                <!-- {{ mock_user_info[props.pointer][0] }} -->
+
+                <!-- <h2>{{ store.posts[postId] }}</h2> -->
+                {{ store.posts.get(props.postId).postedBy }}
+                <!-- {{props.postId}} -->
+                <!-- {{ console.log(store.posts) }} -->
               </div>
               <div class="font-sans ml-3">
                 <p class="text-gray-600 text-xs">
@@ -108,7 +146,7 @@ const getDuration = (datePosted) => {
         <button
           id="upvote"
           class="flex flex-initial justify-center"
-          @click="upvotePost(props.postId, props.userId)"
+          @click="handleUpvote(props.postId)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -131,7 +169,7 @@ const getDuration = (datePosted) => {
         <button
           id="downvote"
           class="flex flex-initial justify-center"
-          @click="downvotePost(props.postId, props.userId)"
+          @click="handleDownvote(props.postId)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

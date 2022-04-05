@@ -68,8 +68,11 @@ const selected_posts = ref(
 );
 
 const handleChangeFilter = () => {
-  selected_posts.value = retrieve_data(selected_filter.value, selected_level.value)
-}
+  selected_posts.value = retrieve_data(
+    selected_filter.value,
+    selected_level.value
+  );
+};
 
 const selected_post_style = (current_state) => {
   return selected_filter.value === current_state
@@ -352,7 +355,10 @@ const submitFile = () => {
           class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xs sm:text-lg w-full"
           :class="selected_post_style(UNDER_REVIEW)"
           aria-current="page"
-          @click="selected_filter = UNDER_REVIEW; handleChangeFilter()"
+          @click="
+            selected_filter = UNDER_REVIEW;
+            handleChangeFilter();
+          "
         >
           Under Review
         </button>
@@ -361,7 +367,10 @@ const submitFile = () => {
         <button
           class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xs sm:text-lg w-full"
           :class="selected_post_style(LEGIT)"
-          @click="selected_filter = LEGIT; handleChangeFilter()"
+          @click="
+            selected_filter = LEGIT;
+            handleChangeFilter();
+          "
         >
           Legit Page
         </button>
@@ -370,7 +379,10 @@ const submitFile = () => {
         <button
           class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xs sm:text-lg w-full"
           :class="selected_post_style(SCAM)"
-          @click="selected_filter = SCAM ; handleChangeFilter()"
+          @click="
+            selected_filter = SCAM;
+            handleChangeFilter();
+          "
         >
           Scam Page
         </button>
@@ -385,7 +397,10 @@ const submitFile = () => {
         <a
           class="font-sans text-md sm:text-xl inline-block default-text"
           type="button"
-          @click="selected_level = ALL; handleChangeFilter()"
+          @click="
+            selected_level = ALL;
+            handleChangeFilter();
+          "
           >All</a
         >
       </li>
@@ -393,7 +408,10 @@ const submitFile = () => {
         <a
           class="font-sans text-md sm:text-xl inline-block default-text"
           type="button"
-          @click="selected_level = TOP; handleChangeFilter()"
+          @click="
+            selected_level = TOP;
+            handleChangeFilter();
+          "
           >Top</a
         >
       </li>

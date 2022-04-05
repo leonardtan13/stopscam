@@ -76,7 +76,7 @@ export const documentToPost = (doc: firebase.firestore.DocumentData): Post => {
     upvotedBy: upvoters,
     downvotedBy: downvoters,
     link: doc.data().link,
-    postedBy: doc.data().postedBy.id,
+    postedBy: doc.data().postedBy,
     images: doc.data().images,
     upvoteCount: upvoters.size,
     downvoteCount: downvoters.size,
