@@ -1,11 +1,12 @@
 <script setup>
 import { reactive } from "vue";
 import { auth, db } from "../firebase";
+import { repScore } from "../services/store";
 import userInfo from "../components/UserInfo.vue";
 
 const userObj = reactive({
-  name: "Leonardo Dicaprio",
-  repScore: 89,
+  name: "",
+  repScore: 0,
   userID: "",
   profileURL: "",
 });
@@ -18,7 +19,10 @@ function findUser(userID) {
       if (doc.exists) {
         userObj.name = doc.data().name;
         userObj.profileURL = doc.data().userPicURL;
-        console.log(userObj.profileURL)
+        userObj.repScore = repScore(
+          doc.data().upvotesReceived,
+          doc.data().downvotesReceived
+        );
       } else {
         console.log("No such document!");
       }
@@ -31,7 +35,6 @@ function findUser(userID) {
 auth.onAuthStateChanged(function (user) {
   if (user) {
     userObj.userID = user.uid;
-    // call the user function here to get all the other data
     findUser(userObj.userID);
   }
 });

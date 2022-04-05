@@ -163,5 +163,14 @@ export const uploadProfilePictoS3 = (
   });
 };
 
-// do up the rep score logic 
-
+// do up the rep score logic
+export const repScore = (
+  upvoteCount: number,
+  downvoteCount: number
+): number => {
+  if (upvoteCount == 0 && downvoteCount == 0) {
+    return 0;
+  } else {
+    return upvoteCount - downvoteCount;
+  }
+};

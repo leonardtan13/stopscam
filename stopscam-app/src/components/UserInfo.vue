@@ -1,5 +1,5 @@
 <script setup>
-import { auth, db } from "../firebase";
+import { db } from "../firebase";
 import { ref } from "vue";
 import { uploadProfilePictoS3 } from "../services/store";
 
@@ -81,7 +81,6 @@ function updateURL(userID, userPicURL) {
     });
 }
 
-
 // Uploading of DP
 const show = ref(false);
 const file = ref("");
@@ -98,7 +97,7 @@ function submitFile(file, userID) {
     .then((response) => {
       // submit back to User profile
       console.log(response);
-      updateURL(userID, response)
+      updateURL(userID, response);
     })
     .catch((error) => {
       console.log(error);
@@ -106,9 +105,10 @@ function submitFile(file, userID) {
 }
 
 const onFileChange = (event, userID) => {
+  console.log(event)
   file.value = event.target.files[0];
+  console.log(file.value);
   submitFile(file.value, userID);
-  window.location.reload();
 };
 
 function openPicture() {
@@ -120,10 +120,7 @@ function openPicture() {
   <body>
     <!-- User Image -->
     <div class="container mx-auto mt-20 my-10 sm:w-full">
-      <div
-        @click="openPicture()"
-        v-html="formatDP(userPicURL, userName)"
-      ></div>
+      <div @click="openPicture()" v-html="formatDP(userPicURL, userName)"></div>
     </div>
     <!-- refine the design here  -->
     <div v-show="show" class="mx-auto content-center w-full sm:w-full">
@@ -154,10 +151,6 @@ function openPicture() {
             {{ userRepScore }}
           </h1>
         </div>
-
-        <p class="text-slate-300 text-center text-sm sm:text-xl font-normal">
-          {{ userDescription }}
-        </p>
       </div>
     </div>
 
