@@ -114,11 +114,13 @@ const Register = () => {
       .then(() => {
         loading.value = false;
         let user = auth.currentUser;
-        console.log('register', user.uid)
+        console.log("register", user.uid);
         let userId = user.uid;
         if (user) {
           console.log(user);
-          db.collection('users').doc(userId).set({
+          db.collection("users")
+            .doc(userId)
+            .set({
               email: state.email,
               name: state.name,
               downvotesReceived: 0,

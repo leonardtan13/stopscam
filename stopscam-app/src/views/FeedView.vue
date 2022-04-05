@@ -9,7 +9,6 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import "../index.css";
-import { createPost, uploadFiletoS3, store } from "../services/store";
 import { ref, onBeforeMount, reactive } from "vue";
 import {
   store,
