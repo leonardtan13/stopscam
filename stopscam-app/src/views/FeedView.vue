@@ -9,16 +9,30 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import "../index.css";
-import { ref, onBeforeMount } from "vue";
 import { createPost, uploadFiletoS3, store } from "../services/store";
+import { ref, onBeforeMount, reactive } from "vue";
+import {
+  store,
+  createPost,
+  uploadFiletoS3,
+  getAllPendingReview,
+  getAllLegitPosts,
+  getAllScamPosts,
+  getTopPendingReview,
+  getTopLegitPosts,
+  getTopScamPosts,
+} from "../services/store";
 
 //ENUMS FOR POST STATE
 const LEGIT = 1;
 const UNDER_REVIEW = 2;
 const SCAM = 3;
+const ALL = 4;
+const TOP = 5;
 
 //STATE VARAIABLES
 const selected_filter = ref(UNDER_REVIEW);
+const selected_level = ref(ALL);
 const isOpen = ref(false);
 const postSuccess = ref(false);
 
@@ -27,6 +41,35 @@ const link = ref("");
 const caption = ref("");
 const file = ref("");
 const isScam = ref(false);
+
+const retrieve_data = (postType, postQuantity) => {
+  switch (true) {
+    case postType === LEGIT && postQuantity === ALL:
+      return getAllLegitPosts(store.posts);
+
+    case postType === UNDER_REVIEW && postQuantity === ALL:
+      return getAllPendingReview(store.posts);
+
+    case postType === SCAM && postQuantity === ALL:
+      return getAllScamPosts(store.posts);
+
+    case postType === LEGIT && postQuantity === TOP:
+      return getTopLegitPosts(store.posts, 0.8);
+
+    case postType === UNDER_REVIEW && postQuantity === TOP:
+      return getTopPendingReview(store.posts, 0.8);
+
+    case postType === SCAM && postQuantity === TOP:
+      return getTopScamPosts(store.posts, 0.8);
+  }
+};
+
+// const real_data = ref([])
+// real_data.value = retrieve_data(selected_filter.value, selected_level.value);
+
+const state = reactive({
+  data: retrieve_data(selected_filter.value, selected_level.value),
+});
 
 const selected_post_style = (current_state) => {
   return selected_filter.value === current_state
@@ -70,8 +113,6 @@ const submitFile = () => {
         link: link.value,
         postedBy: userID,
         images: [response],
-        upvoteCount: 0,
-        downvoteCount: 0,
       };
 
       createPost(post)
@@ -89,79 +130,6 @@ const submitFile = () => {
       console.log(error);
     });
 };
-
-const data = [
-  {
-    scamLink: "http://tripadvisory.com",
-    caption:
-      "Check out the site! Definitely not the tripadvisor that we know of! Visually, it looks almost similar to the authentic website. I almost made my booking here. Becareful everyone!",
-    imgURLS: [
-      "https://www.webintravel.com/wp-content/uploads/2018/11/tripadvisor2.jpg",
-      "https://ttripper.wpengine.com/wp-content/uploads/2018/09/TripAdvisor-New-Interface.jpg",
-      "https://hub.wtm.com/wp-content/uploads/2015/03/PastedGraphic-3.jpg",
-    ],
-    avatar:
-      "https://media.gq.com/photos/56bcb218cdf2db6945d2ef93/16:9/w_2000,h_1125,c_limit/bieber-coverstory-square.jpg",
-    user: "JustinBelieber",
-    duration: "6h",
-    voteCount: 20,
-  },
-  {
-    scamLink: "http://yahooofinanace.com",
-    caption: "Something fishy about this... Better be safe right?",
-    imgURLS: [
-      "https://daytradereview.com/wp-content/uploads/2019/09/Yahoo-Finance-Premium-Dashboard-1024x787.jpg",
-      "https://i.ytimg.com/vi/9ZdrwNffwuc/maxresdefault.jpg",
-    ],
-    avatar: "https://i.mydramalist.com/6q6Z2_5c.jpg",
-    user: "SungKyungLee",
-    duration: "8h",
-    voteCount: 35,
-  },
-  {
-    scamLink: "http://bankofaamerica.com",
-    caption:
-      "My grandparents almost fell for this one, hoping this reach as many people as possible!",
-    imgURLS: [
-      "http://s3.amazonaws.com/finovate-archive/old/WindowsLiveWriter/BankofAmericaFraudHold_14547/image_thumb.png",
-      "https://finovate-wpengine.netdna-ssl.com/wp-content/uploads/2016/12/bofa-home-with-promo-for-features.jpg",
-      "http://s3.amazonaws.com/finovate-archive/old/WindowsLiveWriter/TrackingBankofAmerica_ECE2/image%7B0%7D_thumb%5B9%5D.png",
-    ],
-    avatar:
-      "https://i.zoomtventertainment.com/story/Rose_at_MET_Gala.png?tr=w-1200,h-900",
-    user: "RoseBlackPink",
-    duration: "10h",
-    voteCount: 555,
-  },
-  {
-    scamLink: "http://ocbc-sg.com",
-    caption:
-      "In light of the recent scams, here is another potential scam site received via phone message this morning",
-    imgURLS: [
-      "https://www.ocbc.com/iwov-resources/sg/ocbc/personal/img/live/digitalbanking/security-advisory/phishingwebsite_example1.png",
-      "https://www.ocbc.com/iwov-resources/sg/ocbc/personal/img/live/digitalbanking/security-advisory/phishingemail_example1.png",
-      "https://www.ocbc.com/iwov-resources/sg/ocbc/personal/img/live/digitalbanking/security-advisory/security-image-1.png",
-    ],
-    avatar:
-      "https://media-exp1.licdn.com/dms/image/C5603AQHc57nlB301dQ/profile-displayphoto-shrink_800_800/0/1597763158199?e=1652918400&v=beta&t=Wp_1rCF6oK46LSCz9xWZNn_euavws5tDAvBDZLggefI",
-    user: "Leonardo",
-    duration: "14h",
-    voteCount: 36,
-  },
-  {
-    scamLink: "http://cpf.government.com",
-    caption:
-      "Parents almost keyed in their Singpass details..... A close shave, please take note!",
-    imgURLS: [
-      "https://www.asiaone.com/sites/default/files/original_images/Dec2015/20151214_cpf.jpg",
-    ],
-    avatar:
-      "https://media-exp1.licdn.com/dms/image/C5103AQH4suaqrWXUFA/profile-displayphoto-shrink_800_800/0/1575890945695?e=1652918400&v=beta&t=pLqjned5sdZCLP6tv4vfYr6rLpz_byv9WIkudSKVyLQ",
-    user: "UpperMoon1",
-    duration: "18h",
-    voteCount: 90,
-  },
-];
 </script>
 
 <template>
@@ -416,31 +384,34 @@ const data = [
       <li class="px-5 pt-5">
         <a
           class="font-sans text-md sm:text-xl inline-block default-text"
-          href="#"
+          type="button"
+          @click="selected_level = ALL"
           >All</a
         >
       </li>
       <li class="px-5 pt-5">
         <a
           class="font-sans text-md sm:text-xl inline-block default-text"
-          href="#"
+          type="button"
+          @click="selected_level = TOP"
           >Top</a
         >
       </li>
     </ul>
 
     <!-- Rendering of different posts-->
+    <!-- Need a service to retrieve username based on userid -->
+
     <CardComponent
-      v-for="(post, index) in data"
+      v-for="(post, index) in state.data"
       :key="index"
       class="mb-5"
-      :scam-link="post.scamLink"
-      :caption="post.caption"
-      :img-u-r-l-s="post.imgURLS"
-      :avatar="post.avatar"
-      :user="post.user"
-      :duration="post.duration"
-      :vote-count="post.voteCount"
+      :post-id="post.id"
+      :link="post.link"
+      :caption="post.description"
+      :images="post.images"
+      :date="post.date"
+      :pointer="index"
     />
   </div>
 </template>

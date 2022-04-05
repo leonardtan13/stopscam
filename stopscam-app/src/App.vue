@@ -11,10 +11,9 @@ const router = useRouter();
 const isLoggedIn = ref(true);
 
 onBeforeMount(() => {
-  console.log("calling init posts");
+  console.log("calling init...");
   initPostsData();
-  console.log("posts loaded");
-  console.log("enabling realtime updates....");
+  console.log("enabling realtime updates...");
   enableUpdates();
 });
 

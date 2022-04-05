@@ -18,7 +18,11 @@ export interface Post {
 }
 
 //TypeScript does not have set data type, must push array
-export interface FireBasePost extends Omit<Post, "downvotedBy" | "upvotedBy"> {
+export interface FireBasePost
+  extends Omit<
+    Post,
+    "downvotedBy" | "upvotedBy" | "upvoteCount" | "downvoteCount"
+  > {
   downvotedBy: string[];
   upvotedBy: string[];
 }
@@ -37,7 +41,7 @@ export const initPostsData = async () => {
 };
 
 // enables realtime updates to store
-export const enableUpdates = () => {
+export const enableUpdates = () =>
   postsRef.onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
       if (change.type === "added") {
@@ -106,7 +110,7 @@ export const deletePost = (postId: string): Promise<string> => {
       .doc(postId)
       .delete()
       .then(() => {
-        console.log("deleted: ", postId);
+        console.log("Deleted Post: ", postId);
         resolve("Post Deleted");
       })
       .catch((err) => reject(err));
@@ -163,19 +167,55 @@ export const downvotePost = (
 
 export const getAllPendingReview = (posts: Map<string, Post>): Post[] => {
   return Array.from(posts.values()).filter((post) => {
-    post.isUnderReview === true;
+    return post.isUnderReview === true;
   });
 };
 
 export const getAllLegitPosts = (posts: Map<string, Post>): Post[] => {
   return Array.from(posts.values()).filter((post) => {
-    post.isLegitSite === true;
+    return post.isLegitSite === true;
   });
 };
 
 export const getAllScamPosts = (posts: Map<string, Post>): Post[] => {
   return Array.from(posts.values()).filter((post) => {
-    post.isLegitSite === false;
+    return post.isLegitSite === false;
+  });
+};
+
+export const getTopPendingReview = (
+  posts: Map<string, Post>,
+  minRatio: number
+): Post[] => {
+  return Array.from(posts.values()).filter((post) => {
+    return (
+      post.isUnderReview === true &&
+      post.upvoteCount / (post.upvoteCount + post.downvoteCount) > minRatio
+    );
+  });
+};
+
+export const getTopLegitPosts = (
+  posts: Map<string, Post>,
+  minRatio: number
+): Post[] => {
+  return Array.from(posts.values()).filter((post) => {
+    return (
+      post.isLegitSite === true &&
+      post.upvoteCount / (post.upvoteCount + post.downvoteCount) > minRatio
+    );
+  });
+};
+
+export const getTopScamPosts = (
+  posts: Map<string, Post>,
+  minRatio: number
+): Post[] => {
+  return Array.from(posts.values()).filter((post) => {
+    return (
+      post.isLegitSite === false &&
+      post.upvoteCount / (post.upvoteCount + post.downvoteCount) > minRatio
+    );
   });
 };
 
@@ -187,6 +227,13 @@ export const getTopPostsWithMinRatio = (
     [...posts].filter(([id, post]) => {
       post.upvoteCount / (post.upvoteCount + post.downvoteCount) > minRatio;
     })
+  );
+};
+
+export const retrieveNetVoteCount = (postId: string): number => {
+  return (
+    store.posts.get(postId).upvotedBy.size -
+    store.posts.get(postId).downvotedBy.size
   );
 };
 const updatePostStatus = (postId: string, proportion: number): void => {
