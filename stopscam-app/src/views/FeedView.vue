@@ -10,7 +10,7 @@ import {
 } from "@headlessui/vue";
 import "../index.css";
 import { ref, onBeforeMount } from "vue";
-import { createPost, uploadFiletoS3 } from "../services/store";
+import { createPost, uploadFiletoS3, store } from "../services/store";
 
 //ENUMS FOR POST STATE
 const LEGIT = 1;
@@ -36,6 +36,8 @@ const selected_post_style = (current_state) => {
 
 onBeforeMount(() => {
   document.body.style.backgroundColor = "#0d3939";
+  console.log("getting posts....");
+  console.log(store.posts);
 });
 
 const handleFileUpload = (event) => {

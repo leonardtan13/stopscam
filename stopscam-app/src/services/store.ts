@@ -29,27 +29,36 @@ export const store = reactive({
 
 const postsRef = db.collection("posts");
 
-// enables realtime updates to store
-postsRef.onSnapshot((snapshot) => {
-  snapshot.docChanges().forEach((change) => {
-    if (change.type === "added") {
-      console.log("added: ", change.doc.data());
-      const post = documentToPost(change.doc);
-      store.posts.set(change.doc.id, post);
-    }
-
-    if (change.type === "modified") {
-      console.log("modified: ", change.doc.data());
-      const post = documentToPost(change.doc);
-      store.posts.set(change.doc.id, post);
-    }
-
-    if (change.type === "removed") {
-      console.log("Removed: ", change.doc.data());
-      store.posts.delete(change.doc.id);
-    }
+export const initPostsData = async () => {
+  const docs = await postsRef.get();
+  docs.forEach((doc) => {
+    store.posts.set(doc.id, documentToPost(doc));
   });
-});
+};
+
+// enables realtime updates to store
+export const enableUpdates = () => {
+  postsRef.onSnapshot((snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === "added") {
+        console.log("added: ", change.doc.data());
+        const post = documentToPost(change.doc);
+        store.posts.set(change.doc.id, post);
+      }
+
+      if (change.type === "modified") {
+        console.log("modified: ", change.doc.data());
+        const post = documentToPost(change.doc);
+        store.posts.set(change.doc.id, post);
+      }
+
+      if (change.type === "removed") {
+        console.log("Removed: ", change.doc.data());
+        store.posts.delete(change.doc.id);
+      }
+    });
+  });
+};
 
 // convert document to post type
 export const documentToPost = (doc: firebase.firestore.DocumentData): Post => {
