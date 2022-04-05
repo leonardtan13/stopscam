@@ -1,8 +1,9 @@
 <script setup>
 import { reactive } from "vue";
 import { auth, db } from "../firebase";
-import { repScore } from "../services/store";
+import { getUpVotesDownVotes, getAllPostsByUserId, UpdateUserVotes } from "../services/store";
 import userInfo from "../components/UserInfo.vue";
+
 
 const userObj = reactive({
   name: "",
@@ -10,6 +11,14 @@ const userObj = reactive({
   userID: "",
   profileURL: "",
 });
+
+function repScore(upVotes, downVotes) {
+  if (upVotes == 0 && downVotes == 0) {
+    return 0;
+  } else {
+    return Math.round((upVotes / (upVotes + downVotes)) * 100);
+  }
+}
 
 function findUser(userID) {
   db.collection("users")
@@ -19,9 +28,13 @@ function findUser(userID) {
       if (doc.exists) {
         userObj.name = doc.data().name;
         userObj.profileURL = doc.data().userPicURL;
+        let totalVotesObj = getUpVotesDownVotes(
+          getAllPostsByUserId(userObj.userID)
+        );
+        UpdateUserVotes(userObj.userID, totalVotesObj['upvotes'], totalVotesObj['downvotes']);
         userObj.repScore = repScore(
-          doc.data().upvotesReceived,
-          doc.data().downvotesReceived
+          totalVotesObj['upvotes'],
+          totalVotesObj['downvotes']
         );
       } else {
         console.log("No such document!");

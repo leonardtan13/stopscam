@@ -1,5 +1,4 @@
 import { db, firebase } from "../firebase";
-import AWS from "aws-sdk";
 import { reactive } from "vue";
 import AWS from "aws-sdk";
 
@@ -33,6 +32,7 @@ export const store = reactive({
 });
 
 const postsRef = db.collection("posts");
+const userRef = db.collection('users');
 
 export const initPostsData = async () => {
   const docs = await postsRef.get();
@@ -77,7 +77,7 @@ export const documentToPost = (doc: firebase.firestore.DocumentData): Post => {
     upvotedBy: upvoters,
     downvotedBy: downvoters,
     link: doc.data().link,
-    postedBy: doc.data().postedBy.id,
+    postedBy: doc.data().postedBy,
     images: doc.data().images,
     upvoteCount: upvoters.size,
     downvoteCount: downvoters.size,
@@ -334,14 +334,47 @@ export const uploadProfilePictoS3 = (
     });
   });
 };
-// do up the rep score logic
-export const repScore = (
-  upvoteCount: number,
-  downvoteCount: number
-): number => {
-  if (upvoteCount == 0 && downvoteCount == 0) {
-    return 0;
-  } else {
-    return upvoteCount - downvoteCount;
-  }
+//get all posts from UserID
+export const getAllPostsByUserId = (userId: string) => {
+  return Array.from(store.posts.values()).filter((post) => {
+  return post.postedBy == userId;
+})
 };
+
+export const getUpVotesDownVotes = (
+  allPosts: [], 
+) => {
+  let totalUpVotes = 0;
+  let totalLowVotes = 0;
+
+  for (let post of allPosts) {
+    totalUpVotes += post['upvoteCount'];
+    totalLowVotes += post['downvoteCount'];
+  }
+    if (totalUpVotes == 0 && totalLowVotes == 0) {
+      return {
+        upvotes: 0,
+       downvotes: 0,
+      }
+    } else {
+      return {
+        upvotes: totalUpVotes,
+       downvotes: totalLowVotes,
+      }
+    }
+};
+
+export const UpdateUserVotes = (
+  userId: string, upvotes: number, downvotes: number
+  ) => {
+    userRef.doc(userId)
+    .update({
+     upvotesReceived: upvotes,
+     downvotesReceived: downvotes,
+    })
+    console.log("Post Status Updated");
+    return;
+  }
+
+      
+

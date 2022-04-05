@@ -1,7 +1,7 @@
 <script setup>
 import { db } from "../firebase";
 import { ref } from "vue";
-import { uploadProfilePictoS3 } from "../services/store";
+import { uploadProfilePictoS3, getAllPostsByUserId } from "../services/store";
 
 defineProps({
   userName: String,
@@ -140,7 +140,6 @@ function openPicture() {
         >
           {{ userName }}
         </h1>
-
         <div class="grid mx-auto bg-white w-32 h-32 rounded-lg">
           <h2
             class="text-slate-700 text-center text-md font-medium sm:text-xl mt-2"
