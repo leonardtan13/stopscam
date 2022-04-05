@@ -32,7 +32,7 @@ export const store = reactive({
 });
 
 const postsRef = db.collection("posts");
-const userRef = db.collection('users');
+const userRef = db.collection("users");
 
 export const initPostsData = async () => {
   const docs = await postsRef.get();
@@ -337,44 +337,51 @@ export const uploadProfilePictoS3 = (
 //get all posts from UserID
 export const getAllPostsByUserId = (userId: string) => {
   return Array.from(store.posts.values()).filter((post) => {
-  return post.postedBy == userId;
-})
+    return post.postedBy == userId;
+  });
 };
 
-export const getUpVotesDownVotes = (
-  allPosts: [], 
-) => {
+export const getUpVotesDownVotes = (allPosts: []) => {
   let totalUpVotes = 0;
   let totalLowVotes = 0;
 
   for (let post of allPosts) {
-    totalUpVotes += post['upvoteCount'];
-    totalLowVotes += post['downvoteCount'];
+    totalUpVotes += post["upvoteCount"];
+    totalLowVotes += post["downvoteCount"];
   }
-    if (totalUpVotes == 0 && totalLowVotes == 0) {
-      return {
-        upvotes: 0,
-       downvotes: 0,
-      }
-    } else {
-      return {
-        upvotes: totalUpVotes,
-       downvotes: totalLowVotes,
-      }
-    }
+  if (totalUpVotes == 0 && totalLowVotes == 0) {
+    return {
+      upvotes: 0,
+      downvotes: 0,
+    };
+  } else {
+    return {
+      upvotes: totalUpVotes,
+      downvotes: totalLowVotes,
+    };
+  }
 };
 
 export const UpdateUserVotes = (
-  userId: string, upvotes: number, downvotes: number
-  ) => {
-    userRef.doc(userId)
-    .update({
-     upvotesReceived: upvotes,
-     downvotesReceived: downvotes,
-    })
-    console.log("Post Status Updated");
-    return;
-  }
-
-      
-
+  userId: string,
+  upvotes: number,
+  downvotes: number
+) => {
+  userRef.doc(userId).update({
+    upvotesReceived: upvotes,
+    downvotesReceived: downvotes,
+  });
+  console.log("Post Status Updated");
+  return;
+};
+//use async
+export const getDPFromUser = async(userId: string) => {
+  const doc = await db.collection("users").doc(userId).get()
+      if (doc.exists) {
+        const data = await doc.data()
+        return data.userPicURL;
+      } else {
+        console.log("No such document!");
+        return "";
+      }
+};

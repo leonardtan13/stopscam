@@ -1,9 +1,14 @@
 <script setup>
 import { reactive } from "vue";
 import { auth, db } from "../firebase";
-import { getUpVotesDownVotes, getAllPostsByUserId, UpdateUserVotes } from "../services/store";
-import userInfo from "../components/UserInfo.vue";
+import {
+  getUpVotesDownVotes,
+  getAllPostsByUserId,
+  UpdateUserVotes,
+  getDPFromUser,
 
+} from "../services/store";
+import userInfo from "../components/UserInfo.vue";
 
 const userObj = reactive({
   name: "",
@@ -31,10 +36,14 @@ function findUser(userID) {
         let totalVotesObj = getUpVotesDownVotes(
           getAllPostsByUserId(userObj.userID)
         );
-        UpdateUserVotes(userObj.userID, totalVotesObj['upvotes'], totalVotesObj['downvotes']);
+        UpdateUserVotes(
+          userObj.userID,
+          totalVotesObj["upvotes"],
+          totalVotesObj["downvotes"]
+        );
         userObj.repScore = repScore(
-          totalVotesObj['upvotes'],
-          totalVotesObj['downvotes']
+          totalVotesObj["upvotes"],
+          totalVotesObj["downvotes"]
         );
       } else {
         console.log("No such document!");
@@ -45,7 +54,7 @@ function findUser(userID) {
     });
 }
 
-auth.onAuthStateChanged(function (user) {
+auth.onAuthStateChanged( function (user) {
   if (user) {
     userObj.userID = user.uid;
     findUser(userObj.userID);
@@ -54,6 +63,7 @@ auth.onAuthStateChanged(function (user) {
 </script>
 
 <template>
+
   <userInfo
     :user-i-d="userObj.userID"
     :user-name="userObj.name"
