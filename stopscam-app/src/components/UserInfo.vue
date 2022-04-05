@@ -105,7 +105,7 @@ function submitFile(file, userID) {
 }
 
 const onFileChange = (event, userID) => {
-  console.log(event)
+  console.log(event);
   file.value = event.target.files[0];
   console.log(file.value);
   submitFile(file.value, userID);

@@ -17,20 +17,24 @@ const errorMsgs = {
 
 function DisplayError(error, id) {
   if (id == "authenticate") {
-    error = error.split("/")[1];
-    let errorArr = error.split("-");
-    let displayArr = [];
-    let displayError = "";
-    for (let i = 0; i < errorArr.length; i++) {
-      if (i == 0) {
-        let word = errorArr[0].charAt(0).toUpperCase() + errorArr[0].slice(1);
-        displayArr.push(word);
-      } else {
-        displayArr.push(errorArr[i]);
+    if (error) {
+      error = error.split("/")[1];
+      let errorArr = error.split("-");
+      let displayArr = [];
+      let displayError = "";
+      for (let i = 0; i < errorArr.length; i++) {
+        if (i == 0) {
+          let word = errorArr[0].charAt(0).toUpperCase() + errorArr[0].slice(1);
+          displayArr.push(word);
+        } else {
+          displayArr.push(errorArr[i]);
+        }
       }
+      displayError = displayArr.join(" ");
+      return displayError;
+    } else {
+      return "";
     }
-    displayError = displayArr.join(" ");
-    return displayError;
   }
   if (error == "empty") {
     return errorMsgs[error] + id;
