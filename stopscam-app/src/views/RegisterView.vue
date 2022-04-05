@@ -122,7 +122,7 @@ const Register = () => {
               name: state.name,
               downvotesReceived: 0,
               upvotesReceived: 0,
-              userPicURL: '',
+              userPicURL: "",
             })
             .then(() => {
               router.push("/feed"); // redirect to the feed

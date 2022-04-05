@@ -1,5 +1,7 @@
 <script setup>
 import CardComponent from "../components/CardComponent.vue";
+import { v4 as uuidv4 } from "uuid";
+
 import {
   Dialog,
   DialogOverlay,
@@ -7,14 +9,66 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import "../index.css";
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, reactive } from "vue";
+import {
+  store,
+  createPost,
+  uploadFiletoS3,
+  getAllPendingReview,
+  getAllLegitPosts,
+  getAllScamPosts,
+  getTopPendingReview,
+  getTopLegitPosts,
+  getTopScamPosts,
+} from "../services/store";
 
 //ENUMS FOR POST STATE
 const LEGIT = 1;
 const UNDER_REVIEW = 2;
 const SCAM = 3;
+const ALL = 4;
+const TOP = 5;
+
+//STATE VARAIABLES
 const selected_filter = ref(UNDER_REVIEW);
-const open = ref(false);
+const selected_level = ref(ALL);
+const isOpen = ref(false);
+const postSuccess = ref(false);
+
+//FORM VARIABLES
+const link = ref("");
+const caption = ref("");
+const file = ref("");
+const isScam = ref(false);
+
+const retrieve_data = (postType, postQuantity) => {
+  switch (true) {
+    case postType === LEGIT && postQuantity === ALL:
+      return getAllLegitPosts(store.posts);
+
+    case postType === UNDER_REVIEW && postQuantity === ALL:
+      return getAllPendingReview(store.posts);
+
+    case postType === SCAM && postQuantity === ALL:
+      return getAllScamPosts(store.posts);
+
+    case postType === LEGIT && postQuantity === TOP:
+      return getTopLegitPosts(store.posts, 0.8);
+
+    case postType === UNDER_REVIEW && postQuantity === TOP:
+      return getTopPendingReview(store.posts, 0.8);
+
+    case postType === SCAM && postQuantity === TOP:
+      return getTopScamPosts(store.posts, 0.8);
+  }
+};
+
+// const real_data = ref([])
+// real_data.value = retrieve_data(selected_filter.value, selected_level.value);
+
+const state = reactive({
+  data: retrieve_data(selected_filter.value, selected_level.value),
+});
 
 const selected_post_style = (current_state) => {
   return selected_filter.value === current_state
@@ -24,83 +78,102 @@ const selected_post_style = (current_state) => {
 
 onBeforeMount(() => {
   document.body.style.backgroundColor = "#0d3939";
+  console.log("getting posts....");
+  console.log(store.posts);
 });
 
-const data = [
-  {
-    scamLink: "http://tripadvisory.com",
-    caption:
-      "Check out the site! Definitely not the tripadvisor that we know of! Visually, it looks almost similar to the authentic website. I almost made my booking here. Becareful everyone!",
-    imgURLS: [
-      "https://www.webintravel.com/wp-content/uploads/2018/11/tripadvisor2.jpg",
-      "https://ttripper.wpengine.com/wp-content/uploads/2018/09/TripAdvisor-New-Interface.jpg",
-      "https://hub.wtm.com/wp-content/uploads/2015/03/PastedGraphic-3.jpg",
-    ],
-    avatar:
-      "https://media.gq.com/photos/56bcb218cdf2db6945d2ef93/16:9/w_2000,h_1125,c_limit/bieber-coverstory-square.jpg",
-    user: "JustinBelieber",
-    duration: "6h",
-    voteCount: 20,
-  },
-  {
-    scamLink: "http://yahooofinanace.com",
-    caption: "Something fishy about this... Better be safe right?",
-    imgURLS: [
-      "https://daytradereview.com/wp-content/uploads/2019/09/Yahoo-Finance-Premium-Dashboard-1024x787.jpg",
-      "https://i.ytimg.com/vi/9ZdrwNffwuc/maxresdefault.jpg",
-    ],
-    avatar: "https://i.mydramalist.com/6q6Z2_5c.jpg",
-    user: "SungKyungLee",
-    duration: "8h",
-    voteCount: 35,
-  },
-  {
-    scamLink: "http://bankofaamerica.com",
-    caption:
-      "My grandparents almost fell for this one, hoping this reach as many people as possible!",
-    imgURLS: [
-      "http://s3.amazonaws.com/finovate-archive/old/WindowsLiveWriter/BankofAmericaFraudHold_14547/image_thumb.png",
-      "https://finovate-wpengine.netdna-ssl.com/wp-content/uploads/2016/12/bofa-home-with-promo-for-features.jpg",
-      "http://s3.amazonaws.com/finovate-archive/old/WindowsLiveWriter/TrackingBankofAmerica_ECE2/image%7B0%7D_thumb%5B9%5D.png",
-    ],
-    avatar:
-      "https://i.zoomtventertainment.com/story/Rose_at_MET_Gala.png?tr=w-1200,h-900",
-    user: "RoseBlackPink",
-    duration: "10h",
-    voteCount: 555,
-  },
-  {
-    scamLink: "http://ocbc-sg.com",
-    caption:
-      "In light of the recent scams, here is another potential scam site received via phone message this morning",
-    imgURLS: [
-      "https://www.ocbc.com/iwov-resources/sg/ocbc/personal/img/live/digitalbanking/security-advisory/phishingwebsite_example1.png",
-      "https://www.ocbc.com/iwov-resources/sg/ocbc/personal/img/live/digitalbanking/security-advisory/phishingemail_example1.png",
-      "https://www.ocbc.com/iwov-resources/sg/ocbc/personal/img/live/digitalbanking/security-advisory/security-image-1.png",
-    ],
-    avatar:
-      "https://media-exp1.licdn.com/dms/image/C5603AQHc57nlB301dQ/profile-displayphoto-shrink_800_800/0/1597763158199?e=1652918400&v=beta&t=Wp_1rCF6oK46LSCz9xWZNn_euavws5tDAvBDZLggefI",
-    user: "Leonardo",
-    duration: "14h",
-    voteCount: 36,
-  },
-  {
-    scamLink: "http://cpf.government.com",
-    caption:
-      "Parents almost keyed in their Singpass details..... A close shave, please take note!",
-    imgURLS: [
-      "https://www.asiaone.com/sites/default/files/original_images/Dec2015/20151214_cpf.jpg",
-    ],
-    avatar:
-      "https://media-exp1.licdn.com/dms/image/C5103AQH4suaqrWXUFA/profile-displayphoto-shrink_800_800/0/1575890945695?e=1652918400&v=beta&t=pLqjned5sdZCLP6tv4vfYr6rLpz_byv9WIkudSKVyLQ",
-    user: "UpperMoon1",
-    duration: "18h",
-    voteCount: 90,
-  },
-];
+const handleFileUpload = (event) => {
+  file.value = event.target.files[0];
+};
+
+const submitFile = () => {
+  isOpen.value = false;
+  const postID = uuidv4();
+  const userID = "KD7DAHDS74HFD"; //hard-code for now
+
+  uploadFiletoS3(
+    userID,
+    postID,
+    file.value.name,
+    file.value,
+    import.meta.env.VITE_AWSAccessKeyId,
+    import.meta.env.VITE_AWSSecretKey,
+    import.meta.env.VITE_AWSBucket
+  )
+    .then((response) => {
+      const post = {
+        id: postID,
+        date: new Date(),
+        description: caption.value,
+        downvotedBy: [],
+        upvotedBy: [],
+        isLegitSite: !isScam.value,
+        isUnderReview: true,
+        link: link.value,
+        postedBy: userID,
+        images: [response],
+      };
+
+      createPost(post)
+        .then((response) => {
+          postSuccess.value = true;
+          caption.value = "";
+          isScam.value = false;
+          link.value = "";
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 </script>
 
 <template>
+  <!--Post Success Alert-->
+  <div
+    v-if="postSuccess"
+    class="relative bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md"
+    role="alert"
+  >
+    <div class="flex">
+      <div class="py-1">
+        <svg
+          class="fill-current h-6 w-6 text-teal-500 mr-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"
+          />
+        </svg>
+      </div>
+      <div>
+        <p class="font-bold">Your Post has been successfully uploaded</p>
+        <p class="text-sm">
+          Do refresh the page to view the latest posts in your feed.
+        </p>
+        <span
+          class="absolute top-0 bottom-0 right-0 px-4 py-3"
+          @click="postSuccess = false"
+        >
+          <svg
+            class="fill-current h-6 w-6 text-teal-500"
+            role="button"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+          >
+            <title>Close</title>
+            <path
+              d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"
+            />
+          </svg>
+        </span>
+      </div>
+    </div>
+  </div>
   <!-- Search bar -->
   <div class="text-gray-600 text-base mx-auto my-5 w-2/3 h-15">
     <div class="grid grid-cols-6 gap-4 h-full">
@@ -114,17 +187,17 @@ const data = [
         type="text"
         name="create"
         placeholder="Post something to your community"
-        @click="open = true"
+        @click="isOpen = true"
       />
     </div>
   </div>
 
   <!-- Form Modal -->
-  <TransitionRoot as="template" :show="open">
+  <TransitionRoot as="template" :show="isOpen">
     <Dialog
       as="div"
       class="fixed z-10 inset-0 overflow-y-auto"
-      @close="open = false"
+      @close="isOpen = false"
     >
       <div
         class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
@@ -178,6 +251,7 @@ const data = [
                         >
                         <input
                           id="link"
+                          v-model="link"
                           type="text"
                           name="link"
                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
@@ -193,6 +267,7 @@ const data = [
                         >
                         <textarea
                           id="caption"
+                          v-model="caption"
                           rows="4"
                           class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           placeholder="Additional details..."
@@ -200,15 +275,15 @@ const data = [
                       </div>
                       <div>
                         <label
-                          for="formFileMultiple"
+                          for="formFile"
                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                           >Screenshots</label
                         >
                         <input
-                          id="formFileMultiple"
+                          id="formFile"
                           class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                           type="file"
-                          multiple
+                          @change="handleFileUpload($event)"
                         />
                       </div>
 
@@ -222,6 +297,7 @@ const data = [
                           <div class="relative">
                             <input
                               id="toogle"
+                              v-model="isScam"
                               type="checkbox"
                               class="sr-only"
                             />
@@ -247,14 +323,14 @@ const data = [
                 ref="cancelButtonRef"
                 type="button"
                 class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                @click="open = false"
+                @click="isOpen = false"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-                @click="open = false"
+                @click="submitFile()"
               >
                 Post
               </button>
@@ -307,31 +383,34 @@ const data = [
       <li class="px-5 pt-5">
         <a
           class="font-sans text-md sm:text-xl inline-block default-text"
-          href="#"
+          type="button"
+          @click="selected_level = ALL"
           >All</a
         >
       </li>
       <li class="px-5 pt-5">
         <a
           class="font-sans text-md sm:text-xl inline-block default-text"
-          href="#"
+          type="button"
+          @click="selected_level = TOP"
           >Top</a
         >
       </li>
     </ul>
 
     <!-- Rendering of different posts-->
+    <!-- Need a service to retrieve username based on userid -->
+
     <CardComponent
-      v-for="(post, index) in data"
+      v-for="(post, index) in state.data"
       :key="index"
       class="mb-5"
-      :scam-link="post.scamLink"
-      :caption="post.caption"
-      :img-u-r-l-s="post.imgURLS"
-      :avatar="post.avatar"
-      :user="post.user"
-      :duration="post.duration"
-      :vote-count="post.voteCount"
+      :post-id="post.id"
+      :link="post.link"
+      :caption="post.description"
+      :images="post.images"
+      :date="post.date"
+      :pointer="index"
     />
   </div>
 </template>

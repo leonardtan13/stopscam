@@ -1,17 +1,49 @@
 <script setup>
 import { ref } from "vue";
+import {
+  upvotePost,
+  downvotePost,
+  retrieveNetVoteCount,
+} from "../services/store";
 import "../index.css";
 
 const props = defineProps([
-  "scamLink",
+  "postId",
+  "link",
   "caption",
-  "imgURLS",
-  "avatar",
-  "user",
-  "duration",
-  "voteCount",
+  "images",
+  "date",
+  "pointer",
 ]);
-const voteCount = ref(props.voteCount);
+
+const mock_user_info = [
+  [
+    "JustinBeliber",
+    "https://media.gq.com/photos/56bcb218cdf2db6945d2ef93/16:9/w_2000,h_1125,c_limit/bieber-coverstory-square.jpg",
+  ],
+  ["SungKyungLee", "https://i.mydramalist.com/6q6Z2_5c.jpg"],
+  [
+    "RoseBlackPink",
+    "https://i.zoomtventertainment.com/story/Rose_at_MET_Gala.png?tr=w-1200,h-900",
+  ],
+  [
+    "Leonardo",
+    "https://media-exp1.licdn.com/dms/image/C5603AQHc57nlB301dQ/profile-displayphoto-shrink_800_800/0/1597763158199?e=1652918400&v=beta&t=Wp_1rCF6oK46LSCz9xWZNn_euavws5tDAvBDZLggefI",
+  ],
+  [
+    "UpperMoon1",
+    "https://media-exp1.licdn.com/dms/image/C5103AQH4suaqrWXUFA/profile-displayphoto-shrink_800_800/0/1575890945695?e=1652918400&v=beta&t=pLqjned5sdZCLP6tv4vfYr6rLpz_byv9WIkudSKVyLQ",
+  ],
+];
+
+const voteCount = retrieveNetVoteCount(props.postId);
+const getDuration = (datePosted) => {
+  var hours = Math.abs(new Date() - datePosted) / 36e5;
+  if (hours < 1) {
+    return `${Math.floor(hours * 60)}m`;
+  }
+  return hours < 24 ? `${hours}h` : `${Math.floor(hours / 24)}d`;
+};
 </script>
 
 <template>
@@ -25,15 +57,15 @@ const voteCount = ref(props.voteCount);
           <div class="flex">
             <img
               class="float-left object-cover items-stretch w-12 h-12 rounded-full"
-              :src="props.avatar"
+              :src="mock_user_info[props.pointer][1]"
             />
             <div class="flex-col my-auto w-full">
               <div class="font-sans ml-3 font-bold">
-                {{ props.user }}
+                {{ mock_user_info[props.pointer][0] }}
               </div>
               <div class="font-sans ml-3">
                 <p class="text-gray-600 text-xs">
-                  Posted {{ props.duration }} ago
+                  Posted {{ getDuration(props.date) }} ago
                 </p>
               </div>
             </div>
@@ -47,7 +79,7 @@ const voteCount = ref(props.voteCount);
           <p
             class="font-sans font-bold text-xs sm:text-2xl text-left underline px-4 py-2"
           >
-            {{ props.scamLink }}
+            {{ props.link }}
           </p>
         </div>
       </div>
@@ -64,7 +96,7 @@ const voteCount = ref(props.voteCount);
       <!-- Post Body (Image) -->
       <div class="w-full rounded-xl">
         <img
-          :src="imgURLS[0]"
+          :src="images[0]"
           class="mx-auto px-4 w-full h-full sm:w-10/12 sm:h-10/12"
         />
       </div>
@@ -76,7 +108,7 @@ const voteCount = ref(props.voteCount);
         <button
           id="upvote"
           class="flex flex-initial justify-center"
-          @click="voteCount++"
+          @click="upvotePost(props.postId, props.userId)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +131,7 @@ const voteCount = ref(props.voteCount);
         <button
           id="downvote"
           class="flex flex-initial justify-center"
-          @click="voteCount--"
+          @click="downvotePost(props.postId, props.userId)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

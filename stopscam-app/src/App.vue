@@ -3,11 +3,19 @@
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import NavBar from "./components/NavBar.vue";
 import { auth } from "./firebase";
-import { ref } from "vue";
+import { ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
+import { initPostsData, enableUpdates } from "./services/store";
 
 const router = useRouter();
 const isLoggedIn = ref(true);
+
+onBeforeMount(() => {
+  console.log("calling init...");
+  initPostsData();
+  console.log("enabling realtime updates...");
+  enableUpdates();
+});
 
 auth.onAuthStateChanged(function (user) {
   if (user) {
