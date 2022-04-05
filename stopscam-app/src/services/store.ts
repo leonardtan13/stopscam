@@ -1,4 +1,5 @@
 import { db, firebase } from "../firebase";
+import AWS from "aws-sdk";
 import { reactive } from "vue";
 
 export interface Post {
@@ -131,3 +132,36 @@ export const downvotePost = (
       .catch((err) => reject(err));
   });
 };
+
+export const uploadProfilePictoS3 = (
+  userId: string,
+  fileName: string,
+  file: File,
+  accessKeyId: string,
+  secretAccessKey: string,
+  bucket: string
+): Promise<string> => {
+  const s3 = new AWS.S3({
+    accessKeyId: accessKeyId,
+    secretAccessKey: secretAccessKey,
+  });
+  const params = {
+    Bucket: bucket,
+    Key: `${userId}/profile/${fileName}`,
+    Body: file,
+  };
+
+  return new Promise((resolve, reject) => {
+    s3.upload(params, (err, data) => {
+      if (err) {
+        return reject(err);
+      } else {
+        console.log("File Uploaded");
+        return resolve(data.Location);
+      }
+    });
+  });
+};
+
+// do up the rep score logic 
+

@@ -1,21 +1,25 @@
 <script setup>
+import { auth, db } from "../firebase";
+import { ref } from "vue";
+import { uploadProfilePictoS3 } from "../services/store";
+
 defineProps({
   userName: String,
+  userID: String,
   userRepScore: Number,
-  userDescription: String,
   userPicURL: String,
 });
 
 const randBg = {
-    0: "bg-sky-400",
-    1: "bg-teal-400",
-    2: "bg-amber-400",
-    3: "bg-indigo-400",
-    4: "bg-pink-400",
-    5: "bg-red-400",
-    6: "bg-orange-400",
-    7: "bg-green-400",
-}
+  0: "bg-sky-400",
+  1: "bg-teal-400",
+  2: "bg-amber-400",
+  3: "bg-indigo-400",
+  4: "bg-pink-400",
+  5: "bg-red-400",
+  6: "bg-orange-400",
+  7: "bg-green-400",
+};
 
 function formatRepScore(repScore) {
   if (repScore >= 85) {
@@ -28,45 +32,107 @@ function formatRepScore(repScore) {
 }
 
 function displayName(userName) {
-  var names = userName.split(' ')
-  var initials = names[0].substring(0,1).toUpperCase()
+  var names = userName.split(" ");
+  var initials = names[0].substring(0, 1).toUpperCase();
 
   if (names.length > 1) {
-    initials += names[names.length - 1].substring(0,1).toUpperCase()
+    initials += names[names.length - 1].substring(0, 1).toUpperCase();
   }
-    return initials
+  return initials;
 }
 
 function formatDP(picURL, userName) {
   if (!picURL) {
-    var rand = Math.floor(Math.random() * 8)
-    let result = '<div '
-    result += `class= "grid content-center mx-auto 
-                      rounded-full w-40 h-40 ` + randBg[rand] + ` 
-                      hover:border-4 hover:border-slate-500">
+    var rand = Math.floor(Math.random() * 8);
+    let result = "<div ";
+    result +=
+      `class= "grid content-center mx-auto 
+                      rounded-full w-40 h-40 ` +
+      randBg[rand] +
+      `hover:border-4 hover:border-slate-500">
                 <p
                   class="text-white font-mono text-center text-6xl antialiased font-light hover:text-slate-300"
                 >     
-                ` + displayName(userName) + `</p>
-                </div>`
-    return result
+                ` +
+      displayName(userName) +
+      `</p>
+                </div>`;
+    return result;
+  } else {
+    return `<div> 
+          <img class="rounded-full w-40 h-40 mx-auto hover:border-4 hover:border-slate-500" src="${picURL}" 
+          />
+          </div>`;
   }
 }
+//update user database
+function updateURL(userID, userPicURL) {
+  db.collection("users")
+    .doc(userID)
+    .update({
+      userPicURL: userPicURL,
+    })
+    .then(function () {
+      console.log("Document successfully updated!");
+    })
+    .catch(function (error) {
+      // The document probably doesn't exist.
+      console.error("Error updating document: ", error);
+    });
+}
 
-function edit(userName) {
-  console.log(userName)
+
+// Uploading of DP
+const show = ref(false);
+const file = ref("");
+
+function submitFile(file, userID) {
+  uploadProfilePictoS3(
+    userID,
+    file.name,
+    file,
+    import.meta.env.VITE_AWSAccessKeyId,
+    import.meta.env.VITE_AWSSecretKey,
+    import.meta.env.VITE_AWSBucket
+  )
+    .then((response) => {
+      // submit back to User profile
+      console.log(response);
+      updateURL(userID, response)
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+const onFileChange = (event, userID) => {
+  file.value = event.target.files[0];
+  submitFile(file.value, userID);
+  window.location.reload();
+};
+
+function openPicture() {
+  show.value = true;
 }
 </script>
 
 <template>
   <body>
     <!-- User Image -->
-    <div class="container mx-auto mt-20 my-10 sm:w-full ">
-      <div 
-        @click='edit(userName)'
-        v-html="formatDP(userPicURL,userName)" 
-      >
-      </div>
+    <div class="container mx-auto mt-20 my-10 sm:w-full">
+      <div
+        @click="openPicture()"
+        v-html="formatDP(userPicURL, userName)"
+      ></div>
+    </div>
+    <!-- refine the design here  -->
+    <div v-show="show" class="mx-auto content-center w-full sm:w-full">
+      <input
+        id="pictureURL"
+        type="file"
+        class="mx-auto content-center"
+        @change="onFileChange($event, userID)"
+      />
     </div>
 
     <!-- User Profile -->
