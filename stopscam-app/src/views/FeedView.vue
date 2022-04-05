@@ -9,7 +9,7 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import "../index.css";
-import { ref, onBeforeMount, reactive } from "vue";
+import { ref, onBeforeMount, reactive, watch } from "vue";
 import {
   store,
   createPost,
@@ -63,12 +63,13 @@ const retrieve_data = (postType, postQuantity) => {
   }
 };
 
-// const real_data = ref([])
-// real_data.value = retrieve_data(selected_filter.value, selected_level.value);
+const selected_posts = ref(
+  retrieve_data(selected_filter.value, selected_level.value)
+);
 
-const state = reactive({
-  data: retrieve_data(selected_filter.value, selected_level.value),
-});
+const handleChangeFilter = () => {
+  selected_posts.value = retrieve_data(selected_filter.value, selected_level.value)
+}
 
 const selected_post_style = (current_state) => {
   return selected_filter.value === current_state
@@ -351,7 +352,7 @@ const submitFile = () => {
           class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xs sm:text-lg w-full"
           :class="selected_post_style(UNDER_REVIEW)"
           aria-current="page"
-          @click="selected_filter = UNDER_REVIEW"
+          @click="selected_filter = UNDER_REVIEW; handleChangeFilter()"
         >
           Under Review
         </button>
@@ -360,7 +361,7 @@ const submitFile = () => {
         <button
           class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xs sm:text-lg w-full"
           :class="selected_post_style(LEGIT)"
-          @click="selected_filter = LEGIT"
+          @click="selected_filter = LEGIT; handleChangeFilter()"
         >
           Legit Page
         </button>
@@ -369,7 +370,7 @@ const submitFile = () => {
         <button
           class="block md:px-6 md:py-4 p-2 rounded-lg text-white text-xs sm:text-lg w-full"
           :class="selected_post_style(SCAM)"
-          @click="selected_filter = SCAM"
+          @click="selected_filter = SCAM ; handleChangeFilter()"
         >
           Scam Page
         </button>
@@ -384,7 +385,7 @@ const submitFile = () => {
         <a
           class="font-sans text-md sm:text-xl inline-block default-text"
           type="button"
-          @click="selected_level = ALL"
+          @click="selected_level = ALL; handleChangeFilter()"
           >All</a
         >
       </li>
@@ -392,7 +393,7 @@ const submitFile = () => {
         <a
           class="font-sans text-md sm:text-xl inline-block default-text"
           type="button"
-          @click="selected_level = TOP"
+          @click="selected_level = TOP; handleChangeFilter()"
           >Top</a
         >
       </li>
@@ -402,7 +403,7 @@ const submitFile = () => {
     <!-- Need a service to retrieve username based on userid -->
 
     <CardComponent
-      v-for="(post, index) in state.data"
+      v-for="(post, index) in selected_posts"
       :key="index"
       class="mb-5"
       :post-id="post.id"
