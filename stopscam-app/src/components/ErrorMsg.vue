@@ -17,7 +17,8 @@ const errorMsgs = {
 
 function DisplayError(error, id) {
   if (id == "authenticate") {
-    error = error.split("/")[1];
+    if (error) {
+      error = error.split("/")[1];
     let errorArr = error.split("-");
     let displayArr = [];
     let displayError = "";
@@ -31,6 +32,9 @@ function DisplayError(error, id) {
     }
     displayError = displayArr.join(" ");
     return displayError;
+    } else {
+      return "";
+    }
   }
   if (error == "empty") {
     return errorMsgs[error] + id;
