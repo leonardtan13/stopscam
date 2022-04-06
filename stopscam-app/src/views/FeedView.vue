@@ -1,7 +1,7 @@
 <script setup>
 import CardComponent from "../components/CardComponent.vue";
 import { v4 as uuidv4 } from "uuid";
-
+import { auth } from "../firebase";
 import {
   Dialog,
   DialogOverlay,
@@ -9,7 +9,7 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import "../index.css";
-import { ref, onBeforeMount, reactive, watch } from "vue";
+import { ref, onBeforeMount } from "vue";
 import {
   store,
   createPost,
@@ -34,6 +34,7 @@ const selected_filter = ref(UNDER_REVIEW);
 const selected_level = ref(ALL);
 const isOpen = ref(false);
 const postSuccess = ref(false);
+const loginWarning = ref(false);
 
 //FORM VARIABLES
 const link = ref("");
@@ -80,11 +81,35 @@ const selected_post_style = (current_state) => {
     : ["text-gray-700"];
 };
 
+const disabledButtonStyle = () => {
+  return isDisabled() ? ["opacity-50", "cursor-not-allowed"] : [""];
+};
+
 onBeforeMount(() => {
   document.body.style.backgroundColor = "#0d3939";
   console.log("getting posts....");
   console.log(store.posts);
 });
+
+const isDisabled = () => {
+  if (
+    link.value.length === 0 ||
+    caption.value.length === 0 ||
+    file.value === ""
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const cancelFileSubmission = () => {
+  postSuccess.value = false;
+  caption.value = "";
+  isScam.value = false;
+  link.value = "";
+  file.value = "";
+  isOpen.value = false;
+};
 
 const handleFileUpload = (event) => {
   file.value = event.target.files[0];
@@ -93,7 +118,7 @@ const handleFileUpload = (event) => {
 const submitFile = () => {
   isOpen.value = false;
   const postID = uuidv4();
-  const userID = "KD7DAHDS74HFD"; //hard-code for now
+  const userID = auth.currentUser.uid;
 
   uploadFiletoS3(
     userID,
@@ -124,6 +149,7 @@ const submitFile = () => {
           caption.value = "";
           isScam.value = false;
           link.value = "";
+          file.value = "";
         })
         .catch((error) => {
           console.log(error);
@@ -133,9 +159,42 @@ const submitFile = () => {
       console.log(error);
     });
 };
+
+const handlePost = () => {
+  if (auth.currentUser === null) {
+    loginWarning.value = true;
+    return;
+  }
+  isOpen.value = true;
+};
 </script>
 
 <template>
+  <!-- Login Alert -->
+  <div
+    v-if="loginWarning"
+    class="relative bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 sticky top-0 z-50"
+    role="alert"
+  >
+    <p class="font-bold">Warning</p>
+    <p>You must login to carry out further actions.</p>
+    <span
+      class="absolute top-0 bottom-0 right-0 px-4 py-3"
+      @click="loginWarning = false"
+    >
+      <svg
+        class="fill-current h-6 w-6 text-orange-500"
+        role="button"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+      >
+        <title>Close</title>
+        <path
+          d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"
+        />
+      </svg>
+    </span>
+  </div>
   <!--Post Success Alert-->
   <div
     v-if="postSuccess"
@@ -178,12 +237,19 @@ const submitFile = () => {
       </div>
     </div>
   </div>
-  <!-- Search bar -->
+  <!-- Search bar here-->
   <div class="text-gray-600 text-base mx-auto my-5 w-2/3 h-15">
     <div class="grid grid-cols-6 gap-4 h-full">
       <img
+        v-if="auth.currentUser"
         class="self-center justify-self-end object-cover rounded-full w-12 h-12"
-        src="https://0.soompi.io/wp-content/uploads/2022/01/11203504/Kim-Tae-Ri2.jpg"
+        :src="store.users.get(auth.currentUser.uid).userPicURL"
+        alt="Profile image"
+      />
+      <img
+        v-else
+        class="self-center justify-self-end object-cover rounded-full w-10 h-10"
+        src="https://stopscam.s3.ap-southeast-1.amazonaws.com/default/scam-icon.png"
         alt="Profile image"
       />
       <input
@@ -191,7 +257,7 @@ const submitFile = () => {
         type="text"
         name="create"
         placeholder="Post something to your community"
-        @click="isOpen = true"
+        @click="handlePost()"
       />
     </div>
   </div>
@@ -315,6 +381,19 @@ const submitFile = () => {
                           <div class="ml-3 text-gray-700 font-medium">Scam</div>
                         </label>
                       </div>
+
+                      <div v-if="isDisabled()">
+                        <p class="text-amber-700">
+                          All fields have to be filled in before post
+                          submission.
+                        </p>
+                      </div>
+                      <div v-else>
+                        <p class="text-teal-700">
+                          You are all set. Click Post to finalize your
+                          submission.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -327,13 +406,15 @@ const submitFile = () => {
                 ref="cancelButtonRef"
                 type="button"
                 class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                @click="isOpen = false"
+                @click="cancelFileSubmission()"
               >
                 Cancel
               </button>
               <button
+                :disabled="isDisabled()"
                 type="button"
-                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                :class="disabledButtonStyle()"
                 @click="submitFile()"
               >
                 Post
@@ -390,30 +471,33 @@ const submitFile = () => {
     </div>
   </nav>
 
-  <div class="w-2/3 mx-auto bg-white rounded-xl">
+  <div
+    v-if="selected_posts.length > 0"
+    class="w-2/3 mx-auto bg-white rounded-xl"
+  >
     <!-- Nav Filter -->
     <ul class="w-5/6 flex gap-2 mx-auto h-18">
       <li class="px-5 pt-5">
-        <a
+        <button
           class="font-sans text-md sm:text-xl inline-block default-text"
-          type="button"
           @click="
             selected_level = ALL;
             handleChangeFilter();
           "
-          >All</a
         >
+          All
+        </button>
       </li>
       <li class="px-5 pt-5">
-        <a
+        <button
           class="font-sans text-md sm:text-xl inline-block default-text"
-          type="button"
           @click="
             selected_level = TOP;
             handleChangeFilter();
           "
-          >Top</a
         >
+          Top
+        </button>
       </li>
     </ul>
 
@@ -429,8 +513,23 @@ const submitFile = () => {
       :caption="post.description"
       :images="post.images"
       :date="post.date"
-      :pointer="index"
+      :user-i-d="store.posts.get(post.id).postedBy"
+      @restrict="loginWarning = true"
     />
+  </div>
+
+  <div
+    v-else
+    class="px-30 py-20 w-3/5 mx-auto bg-white rounded-md shadow-xl border"
+  >
+    <div class="flex flex-col items-center">
+      <h1 class="font-bold text-teal-600 text-4xl text-center">
+        Seems a little empty around here...
+      </h1>
+      <h6 class="mb-2 text-lg font-bold text-center text-gray-800 md:text-xl">
+        There doesn't seem to be any posts matching your criteria.
+      </h6>
+    </div>
   </div>
 </template>
 
