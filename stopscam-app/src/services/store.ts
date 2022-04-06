@@ -32,6 +32,7 @@ export const store = reactive({
 });
 
 const postsRef = db.collection("posts");
+const userRef = db.collection("users");
 
 export const initPostsData = async () => {
   const docs = await postsRef.get();
@@ -302,4 +303,85 @@ export const uploadFiletoS3 = (
       }
     });
   });
+};
+
+export const uploadProfilePictoS3 = (
+  userId: string,
+  fileName: string,
+  file: File,
+  accessKeyId: string,
+  secretAccessKey: string,
+  bucket: string
+): Promise<string> => {
+  const s3 = new AWS.S3({
+    accessKeyId: accessKeyId,
+    secretAccessKey: secretAccessKey,
+  });
+  const params = {
+    Bucket: bucket,
+    Key: `${userId}/profile/${fileName}`,
+    Body: file,
+  };
+
+  return new Promise((resolve, reject) => {
+    s3.upload(params, (err, data) => {
+      if (err) {
+        return reject(err);
+      } else {
+        console.log("File Uploaded");
+        return resolve(data.Location);
+      }
+    });
+  });
+};
+//get all posts from UserID
+export const getAllPostsByUserId = (userId: string) => {
+  return Array.from(store.posts.values()).filter((post) => {
+    return post.postedBy == userId;
+  });
+};
+
+export const getUpVotesDownVotes = (allPosts: []) => {
+  let totalUpVotes = 0;
+  let totalLowVotes = 0;
+
+  for (let post of allPosts) {
+    totalUpVotes += post["upvoteCount"];
+    totalLowVotes += post["downvoteCount"];
+  }
+  if (totalUpVotes == 0 && totalLowVotes == 0) {
+    return {
+      upvotes: 0,
+      downvotes: 0,
+    };
+  } else {
+    return {
+      upvotes: totalUpVotes,
+      downvotes: totalLowVotes,
+    };
+  }
+};
+
+export const UpdateUserVotes = (
+  userId: string,
+  upvotes: number,
+  downvotes: number
+) => {
+  userRef.doc(userId).update({
+    upvotesReceived: upvotes,
+    downvotesReceived: downvotes,
+  });
+  console.log("Post Status Updated");
+  return;
+};
+//use async
+export const getDPFromUser = async(userId: string) => {
+  const doc = await db.collection("users").doc(userId).get()
+      if (doc.exists) {
+        const data = await doc.data()
+        return data.userPicURL;
+      } else {
+        console.log("No such document!");
+        return "";
+      }
 };

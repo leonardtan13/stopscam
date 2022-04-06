@@ -76,7 +76,7 @@ const Login = () => {
       .signInWithEmailAndPassword(state.email, state.password)
       .then(() => {
         loading.value = false;
-        router.push("/"); // redirect to the feed
+        router.push("/feed"); // redirect to the feed
       })
       .catch((fbError) => {
         loading.value = false;
