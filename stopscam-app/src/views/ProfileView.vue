@@ -20,7 +20,7 @@ const userObj = reactive({
   profileURL: "",
 });
 
-const url_data = ref('');
+const url_data = ref("");
 
 function repScore(upVotes, downVotes) {
   if (upVotes == 0 && downVotes == 0) {
@@ -59,7 +59,7 @@ function findUser(userID) {
     });
 }
 onMounted(() => {
-  console.log('mounted')
+  console.log("mounted");
   if (!props.userID) {
     auth.onAuthStateChanged(function (user) {
       if (user) {
@@ -73,8 +73,7 @@ onMounted(() => {
     userObj.userID = props.userID;
     findUser(userObj.userID);
   }
-})
-
+});
 </script>
 
 <template>
