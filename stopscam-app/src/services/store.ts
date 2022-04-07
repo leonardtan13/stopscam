@@ -374,14 +374,22 @@ export const UpdateUserVotes = (
   console.log("Post Status Updated");
   return;
 };
-//use async
-export const getDPFromUser = async(userId: string) => {
-  const doc = await db.collection("users").doc(userId).get()
+
+export const getDPFromUser = (userId: string) => {
+  db.collection("users")
+    .doc(userId)
+    .get()
+    .then((doc) => {
       if (doc.exists) {
-        const data = await doc.data()
-        return data.userPicURL;
+        if (doc.data()) {
+          console.log(doc.data().userPicURL);
+          return doc.data().userPicURL;
+        }
       } else {
         console.log("No such document!");
-        return "";
       }
+    })
+    .catch((error) => {
+      console.log("Error getting document:", error);
+    });
 };

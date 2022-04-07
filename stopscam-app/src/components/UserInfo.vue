@@ -1,7 +1,7 @@
 <script setup>
 import { db } from "../firebase";
 import { ref } from "vue";
-import { uploadProfilePictoS3 } from "../services/store";
+import { uploadProfilePictoS3, getDPFromUser } from "../services/store";
 
 defineProps({
   userName: String,
