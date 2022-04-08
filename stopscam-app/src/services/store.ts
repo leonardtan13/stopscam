@@ -416,3 +416,49 @@ export const UpdateUserVotes = (
   console.log("Post Status Updated");
   return;
 };
+
+
+export const getDPFromUser = (userId: string) => {
+  db.collection("users")
+    .doc(userId)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        if (doc.data()) {
+          console.log(doc.data().userPicURL);
+          return doc.data().userPicURL;
+        }
+      } else {
+        console.log("No such document!");
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting document:", error);
+    });
+};
+
+
+export const urlIsLegit =  (inputUrl: string): boolean =>  {
+  const legitReviewedPosts : Post[] = getAllLegitPosts(store.posts).filter( (post) => {return !post.isUnderReview})
+
+  legitReviewedPosts.forEach((post) => {
+    if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
+      return true
+    }
+  })
+  return false
+}
+
+
+export const urlIsScam =  (inputUrl: string): boolean =>  {
+
+  const scamReviewedPosts : Post[] = getAllScamPosts(store.posts).filter( (post) => {return !post.isUnderReview})
+
+  scamReviewedPosts.forEach((post) => {
+    if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
+      return true
+    }
+  })
+  
+  return false
+}
