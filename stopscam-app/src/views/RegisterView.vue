@@ -157,12 +157,12 @@ const Register = () => {
                   id="name"
                   v-model="state.name"
                   type="text"
-                  name="Name"
+                  name="User Name"
                   :input-error="error.name[0]"
                 />
                 <ErrorMsg
                   v-if="error.name[0]"
-                  id="Name"
+                  id="User Name"
                   :error="error.name[1]"
                 />
               </div>

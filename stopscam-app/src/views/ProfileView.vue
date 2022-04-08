@@ -1,14 +1,17 @@
 <script setup>
-import { reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { auth, db } from "../firebase";
 import {
   getUpVotesDownVotes,
   getAllPostsByUserId,
   UpdateUserVotes,
-  getDPFromUser,
-
 } from "../services/store";
 import userInfo from "../components/UserInfo.vue";
+
+const props = defineProps({
+  // to check if its the user's own profile
+  userID: String,
+});
 
 const userObj = reactive({
   name: "",
@@ -16,6 +19,8 @@ const userObj = reactive({
   userID: "",
   profileURL: "",
 });
+
+const url_data = ref("");
 
 function repScore(upVotes, downVotes) {
   if (upVotes == 0 && downVotes == 0) {
@@ -53,17 +58,25 @@ function findUser(userID) {
       console.log("Error getting document:", error);
     });
 }
-
-auth.onAuthStateChanged( function (user) {
-  if (user) {
-    userObj.userID = user.uid;
+onMounted(() => {
+  console.log("mounted");
+  if (!props.userID) {
+    auth.onAuthStateChanged(function (user) {
+      if (user) {
+        userObj.userID = user.uid;
+        findUser(userObj.userID);
+      } else {
+        console.log("not logged in");
+      }
+    });
+  } else {
+    userObj.userID = props.userID;
     findUser(userObj.userID);
   }
 });
 </script>
 
 <template>
-
   <userInfo
     :user-i-d="userObj.userID"
     :user-name="userObj.name"
