@@ -9,20 +9,8 @@ defineProps({
   userID: String,
   userRepScore: Number,
   userPicURL: String,
+  viewing: Boolean,
 });
-
-const allPost = ref([]);
-
-const randBg = {
-  0: "bg-sky-400",
-  1: "bg-teal-400",
-  2: "bg-amber-400",
-  3: "bg-indigo-400",
-  4: "bg-pink-400",
-  5: "bg-red-400",
-  6: "bg-orange-400",
-  7: "bg-green-400",
-};
 
 function formatRepScore(repScore) {
   if (repScore >= 85) {
@@ -34,40 +22,6 @@ function formatRepScore(repScore) {
   }
 }
 
-function displayName(userName) {
-  var names = userName.split(" ");
-  var initials = names[0].substring(0, 1).toUpperCase();
-
-  if (names.length > 1) {
-    initials += names[names.length - 1].substring(0, 1).toUpperCase();
-  }
-  return initials;
-}
-
-function formatDP(picURL, userName) {
-  if (!picURL) {
-    var rand = Math.floor(Math.random() * 8);
-    let result = "<div ";
-    result +=
-      `class= "grid content-center mx-auto 
-                      rounded-full w-40 h-40 ` +
-      randBg[rand] +
-      `hover:border-4 hover:border-slate-500">
-                <p
-                  class="text-white font-mono text-center text-6xl antialiased font-light hover:text-slate-300"
-                >     
-                ` +
-      displayName(userName) +
-      `</p>
-                </div>`;
-    return result;
-  } else {
-    return `<div> 
-          <img class="rounded-full w-40 h-40 mx-auto hover:border-4 hover:border-slate-500" src="${picURL}" 
-          />
-          </div>`;
-  }
-}
 //update user database
 function updateURL(userID, userPicURL) {
   db.collection("users")
@@ -123,10 +77,15 @@ function openPicture() {
   <body>
     <!-- User Image -->
     <div class="container mx-auto mt-20 my-10 sm:w-full">
-      <div @click="openPicture()" v-html="formatDP(userPicURL, userName)"></div>
+      <div @click="openPicture()">
+      <div> 
+          <img class="rounded-full w-40 h-40 mx-auto hover:border-4 hover:border-slate-500" :src="userPicURL" 
+          />
+          </div>
+      </div>
     </div>
     <!-- refine the design here  -->
-    <div v-show="show" class="mx-auto content-center w-full sm:w-full">
+    <div v-show="show && !viewing" class="mx-auto content-center w-full sm:w-full">
       <input
         id="pictureURL"
         type="file"

@@ -18,6 +18,7 @@ const userObj = reactive({
   repScore: 0,
   userID: "",
   profileURL: "",
+  viewing: false,
 });
 
 const url_data = ref("");
@@ -72,6 +73,7 @@ onMounted(() => {
   } else {
     userObj.userID = props.userID;
     findUser(userObj.userID);
+    userObj.viewing = true;
   }
 });
 </script>
@@ -82,6 +84,7 @@ onMounted(() => {
     :user-name="userObj.name"
     :user-rep-score="userObj.repScore"
     :user-pic-u-r-l="userObj.profileURL"
+    :viewing="userObj.viewing"
   >
   </userInfo>
 </template>
