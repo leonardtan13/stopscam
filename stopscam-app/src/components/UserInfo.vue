@@ -11,7 +11,7 @@ defineProps({
   userPicURL: String,
 });
 
-const allPost = ref([])
+const allPost = ref([]);
 
 const randBg = {
   0: "bg-sky-400",
@@ -117,7 +117,6 @@ const onFileChange = (event, userID) => {
 function openPicture() {
   show.value = true;
 }
-
 </script>
 
 <template>
@@ -159,21 +158,24 @@ function openPicture() {
 
     <!-- User Posts -->
     <div class="container mx-auto my-10 p-6 rounded-xl w-3/4 sm:w-2/3 bg-white">
-      <div v-if="getAllPostsByUserId(userID).length > 0" class="grid grid-flow-row auto-rows-max gap-6">
-      <cardComponent
-      v-for="(post, index) in getAllPostsByUserId(userID)"
-      :key="index"
-      class="mb-5"
-      :post-id="post.id"
-      :link="post.link"
-      :caption="post.description"
-      :images="post.images"
-      :date="post.date"
-      :pointer="index"
-    />
+      <div
+        v-if="getAllPostsByUserId(userID).length > 0"
+        class="grid grid-flow-row auto-rows-max gap-6"
+      >
+        <cardComponent
+          v-for="(post, index) in getAllPostsByUserId(userID)"
+          :key="index"
+          class="mb-5"
+          :post-id="post.id"
+          :link="post.link"
+          :caption="post.description"
+          :images="post.images"
+          :date="post.date"
+          :pointer="index"
+        />
       </div>
       <div v-else class="grid grid-flow-row auto-rows-max gap-6">
-          You have not posted anything
+        You have not posted anything
       </div>
     </div>
   </body>
