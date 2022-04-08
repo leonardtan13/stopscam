@@ -122,7 +122,8 @@ const Register = () => {
               name: state.name,
               downvotesReceived: 0,
               upvotesReceived: 0,
-              userPicURL: "",
+              userPicURL:
+                "https://stopscam.s3.ap-southeast-1.amazonaws.com/default/scam-icon.png",
             })
             .then(() => {
               router.push("/feed"); // redirect to the feed

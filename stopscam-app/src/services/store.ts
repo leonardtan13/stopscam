@@ -17,6 +17,15 @@ export interface Post {
   downvoteCount: number;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  userPicURL: string | undefined;
+  downvotesReceived: number;
+  upvotesReceived: number;
+}
+
 //TypeScript does not have set data type, must push array
 export interface FireBasePost
   extends Omit<
@@ -29,20 +38,28 @@ export interface FireBasePost
 
 export const store = reactive({
   posts: new Map<string, Post>(),
+  users: new Map<string, User>(),
 });
 
 const postsRef = db.collection("posts");
 const userRef = db.collection("users");
 
 export const initPostsData = async () => {
-  const docs = await postsRef.get();
+  const docs = await postsRef.orderBy("date", "desc").get();
   docs.forEach((doc) => {
     store.posts.set(doc.id, documentToPost(doc));
   });
 };
 
+export const initUsersData = async () => {
+  const docs = await userRef.get();
+  docs.forEach((doc) => {
+    store.users.set(doc.id, documentToUser(doc));
+  });
+};
+
 // enables realtime updates to store
-export const enableUpdates = () =>
+export const enableUpdates = () => {
   postsRef.onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
       if (change.type === "added") {
@@ -64,6 +81,17 @@ export const enableUpdates = () =>
     });
   });
 
+  userRef.onSnapshot((snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === "added") {
+        console.log("added: ", change.doc.data());
+        const user = documentToUser(change.doc);
+        store.users.set(change.doc.id, user);
+      }
+    });
+  });
+};
+
 // convert document to post type
 export const documentToPost = (doc: firebase.firestore.DocumentData): Post => {
   const upvoters: Set<string> = new Set(doc.data().upvotedBy);
@@ -84,6 +112,20 @@ export const documentToPost = (doc: firebase.firestore.DocumentData): Post => {
   };
 
   return post;
+};
+
+// convert document to user type
+export const documentToUser = (doc: firebase.firestore.DocumentData): User => {
+  const user: User = {
+    id: doc.id,
+    email: doc.data().email,
+    name: doc.data().name,
+    userPicURL: doc.data().userPicURL,
+    downvotesReceived: doc.data().downvotesReceived,
+    upvotesReceived: doc.data().upvotesReceived,
+  };
+
+  return user;
 };
 
 export const createPost = (post: FireBasePost): Promise<string> => {
@@ -373,23 +415,4 @@ export const UpdateUserVotes = (
   });
   console.log("Post Status Updated");
   return;
-};
-
-export const getDPFromUser = (userId: string) => {
-  db.collection("users")
-    .doc(userId)
-    .get()
-    .then((doc) => {
-      if (doc.exists) {
-        if (doc.data()) {
-          console.log(doc.data().userPicURL);
-          return doc.data().userPicURL;
-        }
-      } else {
-        console.log("No such document!");
-      }
-    })
-    .catch((error) => {
-      console.log("Error getting document:", error);
-    });
 };
