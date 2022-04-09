@@ -416,3 +416,29 @@ export const UpdateUserVotes = (
   console.log("Post Status Updated");
   return;
 };
+
+
+export const urlIsLegit =  (inputUrl: string): boolean =>  {
+  const legitReviewedPosts : Post[] = getAllLegitPosts(store.posts).filter( (post) => {return !post.isUnderReview})
+
+  legitReviewedPosts.forEach((post) => {
+    if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
+      return true
+    }
+  })
+  return false
+}
+
+
+export const urlIsScam =  (inputUrl: string): boolean =>  {
+
+  const scamReviewedPosts : Post[] = getAllScamPosts(store.posts).filter( (post) => {return !post.isUnderReview})
+
+  scamReviewedPosts.forEach((post) => {
+    if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
+      return true
+    }
+  })
+  
+  return false
+}
