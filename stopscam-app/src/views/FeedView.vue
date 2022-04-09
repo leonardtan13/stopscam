@@ -168,9 +168,18 @@ const handlePost = () => {
   }
   isOpen.value = true;
 };
+
+const isLoading = ref(false)
+
+const setIsLoading = (isLoadingChange) => {
+  console.log("received emit: ", isLoadingChange)
+  isLoading.value = isLoadingChange
+}
 </script>
 
 <template>
+  
+
   <!-- Login Alert -->
   <div
     v-if="loginWarning"
@@ -502,22 +511,23 @@ const handlePost = () => {
       </li>
     </ul>
 
+        
     <!-- Rendering of different posts-->
     <!-- Need a service to retrieve username based on userid -->
 
-    <CardComponent
-      v-for="(post, index) in selected_posts"
-      :key="index"
-      class="mb-5"
-      :post-id="post.id"
-      :link="post.link"
-      :caption="post.description"
-      :images="post.images"
-      :date="post.date"
-      :user-i-d="store.posts.get(post.id).postedBy"
-      @restrict="loginWarning = true"
-      :voteCount="retrieveNetVoteCount(post.id)"
-    />
+      <CardComponent
+        v-for="(post, index) in selected_posts"
+        :key="index"
+        class="mb-5"
+        :post-id="post.id"
+        :link="post.link"
+        :caption="post.description"
+        :images="post.images"
+        :date="post.date"
+        :user-i-d="store.posts.get(post.id).postedBy"
+        @restrict="loginWarning = true"
+        :voteCount="retrieveNetVoteCount(post.id)"
+      />
   </div>
 
   <div
@@ -551,4 +561,5 @@ input:checked ~ .dot {
   color: #0d3939;
   border-bottom-color: #0d3939;
 }
+
 </style>

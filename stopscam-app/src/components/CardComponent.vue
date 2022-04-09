@@ -4,14 +4,12 @@ import {
   removeUpvote,
   removeDownvote,
   downvotePost,
-  retrieveNetVoteCount,
   getPostByPostId,
 } from "../services/store";
 import "../index.css";
 import { ref } from 'vue'
 import { auth } from "../firebase";
 import { store } from "../services/store";
-import Loading from 'vue3-loading-overlay'
 
 const emit = defineEmits({
   restrict: null,
@@ -23,7 +21,6 @@ const handleUpvote = async (postId) => {
     return;
   }
 
-  isLoading.value = true
 
   if (!isUpvoted.value) {
 
@@ -32,7 +29,6 @@ const handleUpvote = async (postId) => {
       const res = await upvotePost(postId, auth.currentUser.uid);
       isUpvoted.value = true;
       props.voteCount += 1
-      isLoading.value = false
       return
     } catch (e) {
       console.error(e);
@@ -44,7 +40,6 @@ const handleUpvote = async (postId) => {
       const res = await removeUpvote(postId, auth.currentUser.uid);
       isUpvoted.value = false;
       props.voteCount -= 1
-      isLoading.value = false
       return
     } catch (e) {
       console.error(e);
