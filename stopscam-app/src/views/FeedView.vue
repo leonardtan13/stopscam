@@ -20,6 +20,7 @@ import {
   getTopPendingReview,
   getTopLegitPosts,
   getTopScamPosts,
+  retrieveNetVoteCount,
 } from "../services/store";
 
 //ENUMS FOR POST STATE
@@ -515,6 +516,7 @@ const handlePost = () => {
       :date="post.date"
       :user-i-d="store.posts.get(post.id).postedBy"
       @restrict="loginWarning = true"
+      :voteCount="retrieveNetVoteCount(post.id)"
     />
   </div>
 

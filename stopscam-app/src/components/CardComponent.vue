@@ -11,6 +11,7 @@ import "../index.css";
 import { ref } from 'vue'
 import { auth } from "../firebase";
 import { store } from "../services/store";
+import Loading from 'vue3-loading-overlay'
 
 const emit = defineEmits({
   restrict: null,
@@ -22,13 +23,16 @@ const handleUpvote = async (postId) => {
     return;
   }
 
+  isLoading.value = true
+
   if (!isUpvoted.value) {
 
     console.log("upvoting post")
     try {
       const res = await upvotePost(postId, auth.currentUser.uid);
       isUpvoted.value = true;
-      voteCount.value += 1
+      props.voteCount += 1
+      isLoading.value = false
       return
     } catch (e) {
       console.error(e);
@@ -39,7 +43,8 @@ const handleUpvote = async (postId) => {
     try {
       const res = await removeUpvote(postId, auth.currentUser.uid);
       isUpvoted.value = false;
-      voteCount.value -= 1
+      props.voteCount -= 1
+      isLoading.value = false
       return
     } catch (e) {
       console.error(e);
@@ -60,7 +65,7 @@ const handleDownvote = async (postId) => {
     try {
       await downvotePost(postId, auth.currentUser.uid);
       isDownvoted.value = true;
-      voteCount.value -= 1
+      props.voteCount -= 1
       return
     } catch (e) {
       console.error(e);
@@ -70,7 +75,7 @@ const handleDownvote = async (postId) => {
       console.log("removing downvote")
       await removeDownvote(postId, auth.currentUser.uid);
       isDownvoted.value = false;
-      voteCount.value += 1
+      props.voteCount += 1
     } catch (e) {
       console.error(e);
     }
@@ -87,9 +92,10 @@ const props = defineProps([
   "images",
   "date",
   "userID",
+  "voteCount"
 ]);
 
-const voteCount = ref(retrieveNetVoteCount(props.postId));
+// const voteCount = ref(retrieveNetVoteCount(props.postId));
 const getDuration = (datePosted) => {
   var hours = Math.abs(new Date() - datePosted) / 36e5;
   if (hours < 1) {
@@ -101,15 +107,20 @@ const getDuration = (datePosted) => {
 const post= getPostByPostId(props.postId)
 const isUpvoted = ref(post.upvotedBy.has(auth.currentUser.uid))
 const isDownvoted = ref(post.downvotedBy.has(auth.currentUser.uid))
-// console.log("upvoters: ", post.upvotedBy)
-// console.log("my ID: ", auth.currentUser.uid)
-// console.log("post: ", post, " is upvoted: ", isUpvoted)
+
+
+const isLoading = ref(false)
 </script>
 
 <template>
+<!-- <Loading :active="isLoading"
+    :is-full-page="true"
+    >
+    </Loading> -->
   <div
     class="grid grid-flow-row grid-cols-9 auto-rows-max gap-2 mx-auto my-5 w-5/6 h-full rounded-xl shadow-xl border"
   >
+    
     <div class="col-span-8 p-5">
       <!-- User -->
       <div class="flex flex-row">
@@ -191,7 +202,7 @@ const isDownvoted = ref(post.downvotedBy.has(auth.currentUser.uid))
         <p
           class="flex flex-initial justify-center font-bold text-sm sm:text-xl"
         >
-          {{ voteCount }}
+          {{ props.voteCount }}
         </p>
 
         <button
