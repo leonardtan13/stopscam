@@ -99,13 +99,11 @@ function formValid() {
 }
 
 const loading = ref(false);
-const database = db.collection("/users");
 
 const Register = () => {
   loading.value = true;
   //validation checks
   state.valid = formValid();
-  console.log(database);
 
   // Sending valid data to firebase
   if (state.valid) {
@@ -114,17 +112,21 @@ const Register = () => {
       .then(() => {
         loading.value = false;
         let user = auth.currentUser;
+        console.log("register", user.uid);
+        let userId = user.uid;
         if (user) {
-          console.log(user);
-          database
-            .add({
+          db.collection("users")
+            .doc(userId)
+            .set({
               email: state.email,
               name: state.name,
               downvotesReceived: 0,
               upvotesReceived: 0,
+              userPicURL:
+                "https://stopscam.s3.ap-southeast-1.amazonaws.com/default/scam-icon.png",
             })
             .then(() => {
-              router.push("/"); // redirect to the feed
+              router.push("/feed"); // redirect to the feed
             })
             .catch((dbError) => {
               console.log("problem adding to DB", dbError);
@@ -156,12 +158,12 @@ const Register = () => {
                   id="name"
                   v-model="state.name"
                   type="text"
-                  name="Name"
+                  name="User Name"
                   :input-error="error.name[0]"
                 />
                 <ErrorMsg
                   v-if="error.name[0]"
-                  id="Name"
+                  id="User Name"
                   :error="error.name[1]"
                 />
               </div>
