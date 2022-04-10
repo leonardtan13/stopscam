@@ -1,16 +1,27 @@
 <script setup>
 import {
   upvotePost,
+  removeUpvote,
+  removeDownvote,
   downvotePost,
-  retrieveNetVoteCount,
+  getPostByPostId,
 } from "../services/store";
 import "../index.css";
+import { ref, computed } from 'vue'
 import { auth } from "../firebase";
 import { store } from "../services/store";
 
-const emit = defineEmits({
-  restrict: null,
-});
+const emit = defineEmits(['restrict']);
+
+var voteCount = computed({
+  get() {
+    return props.voteCount
+  },
+
+  set(value) {
+    emit('update:voteCount', value)
+  }
+})
 
 const handleUpvote = async (postId) => {
   if (auth.currentUser === null) {
@@ -18,11 +29,32 @@ const handleUpvote = async (postId) => {
     return;
   }
 
-  try {
-    const res = await upvotePost(postId, auth.currentUser.uid);
-  } catch (e) {
-    console.error(e);
+
+  if (!isUpvoted.value) {
+
+    console.log("upvoting post")
+    try {
+      const res = await upvotePost(postId, auth.currentUser.uid);
+      isUpvoted.value = true;
+      voteCount = voteCount + 1
+      return
+    } catch (e) {
+      console.error(e);
+    }
+  } else {
+
+    console.log("removing upvote")
+    try {
+      const res = await removeUpvote(postId, auth.currentUser.uid);
+      isUpvoted.value = false;
+      voteCount -= 1
+      return
+    } catch (e) {
+      console.error(e);
+    }
   }
+
+  
 };
 
 const handleDownvote = async (postId) => {
@@ -31,11 +63,29 @@ const handleDownvote = async (postId) => {
     return;
   }
 
-  try {
-    await downvotePost(postId, auth.currentUser.uid);
-  } catch (e) {
-    console.error(e);
+  if (!isDownvoted.value) {
+    console.log("downvoting post")
+    try {
+      await downvotePost(postId, auth.currentUser.uid);
+      isDownvoted.value = true;
+      voteCount -= 1
+      return
+    } catch (e) {
+      console.error(e);
+    }
+  } else {
+    try {
+      console.log("removing downvote")
+      await removeDownvote(postId, auth.currentUser.uid);
+      isDownvoted.value = false;
+      voteCount += 1
+    } catch (e) {
+      console.error(e);
+    }
+
   }
+
+  
 };
 
 const props = defineProps([
@@ -45,9 +95,10 @@ const props = defineProps([
   "images",
   "date",
   "userID",
+  "voteCount"
 ]);
 
-const voteCount = retrieveNetVoteCount(props.postId);
+// const voteCount = ref(retrieveNetVoteCount(props.postId));
 const getDuration = (datePosted) => {
   var hours = Math.abs(new Date() - datePosted) / 36e5;
   if (hours < 1) {
@@ -55,12 +106,19 @@ const getDuration = (datePosted) => {
   }
   return hours < 24 ? `${Math.floor(hours)}h` : `${Math.floor(hours / 24)}d`;
 };
+
+const post= getPostByPostId(props.postId)
+const isUpvoted = auth.currentUser === null ? false : ref(post.upvotedBy.has(auth.currentUser.uid))
+const isDownvoted = auth.currentUser === null ? false : ref(post.downvotedBy.has(auth.currentUser.uid))
+
+
 </script>
 
 <template>
   <div
     class="grid grid-flow-row grid-cols-9 auto-rows-max gap-2 mx-auto my-5 w-5/6 h-full rounded-xl shadow-xl border"
   >
+    
     <div class="col-span-8 p-5">
       <!-- User -->
       <div class="flex flex-row">
@@ -121,9 +179,10 @@ const getDuration = (datePosted) => {
     <div class="bg-slate-50 pt-5 rounded-r-xl">
       <div class="flex flex-col w-full h-full">
         <button
-          id="upvote"
           class="flex flex-initial justify-center"
+          :class="{upvoted: isUpvoted, upvote: !isUpvoted}"
           @click="handleUpvote(props.postId)"
+          :disabled="isDownvoted"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -135,18 +194,20 @@ const getDuration = (datePosted) => {
               d="M256 0C114.6 0 0 114.6 0 256s114.6 256 256 256c141.4 0 256-114.6 256-256S397.4 0 256 0zM382.8 246.1C380.3 252.1 374.5 256 368 256h-64v96c0 17.67-14.33 32-32 32h-32c-17.67 0-32-14.33-32-32V256h-64C137.5 256 131.7 252.1 129.2 246.1C126.7 240.1 128.1 233.3 132.7 228.7l112-112c6.248-6.248 16.38-6.248 22.62 0l112 112C383.9 233.3 385.3 240.1 382.8 246.1z"
             />
           </svg>
+          
         </button>
 
         <p
           class="flex flex-initial justify-center font-bold text-sm sm:text-xl"
         >
-          {{ voteCount }}
+          {{ props.voteCount }}
         </p>
 
         <button
-          id="downvote"
           class="flex flex-initial justify-center"
+          :class="{downvoted: isDownvoted, downvote: !isDownvoted}"
           @click="handleDownvote(props.postId)"
+          :disabled="isUpvoted"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -165,17 +226,25 @@ const getDuration = (datePosted) => {
 </template>
 
 <style scoped>
-#upvote {
+.upvote {
   fill: #cdcdcd;
 }
-#upvote:hover {
+.upvote:hover {
   fill: #90d998;
 }
 
-#downvote {
+.downvote {
   fill: #cdcdcd;
 }
-#downvote:hover {
+.downvote:hover {
+  fill: #ff585b;
+}
+
+.upvoted {
+  fill: #90d998
+}
+
+.downvoted {
   fill: #ff585b;
 }
 </style>

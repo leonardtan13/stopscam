@@ -183,6 +183,30 @@ export const upvotePost = (
   });
 };
 
+export const removeUpvote = (
+  postId: string,
+  upvoterId: string
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (
+      store.posts.get(postId).upvotedBy.has(upvoterId) ||
+      store.posts.get(postId).downvotedBy.has(upvoterId)
+    ) {
+      reject("already upvoted or downvoted");
+    }
+    postsRef
+      .doc(postId)
+      .update({
+        upvotedBy: firebase.firestore.FieldValue.arrayRemove(upvoterId),
+      })
+      .then(() => {
+        updatePostStatus(postId, 0.8);
+        resolve("upvote removed");
+      })
+      .catch((err) => reject(err));
+  });
+};
+
 export const downvotePost = (
   postId: string,
   downvoterId: string
@@ -202,6 +226,30 @@ export const downvotePost = (
       .then(() => {
         updatePostStatus(postId, 0.8);
         resolve("downvoted");
+      })
+      .catch((err) => reject(err));
+  });
+};
+
+export const removeDownvote = (
+  postId: string,
+  downvoterId: string
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (
+      store.posts.get(postId).upvotedBy.has(downvoterId) ||
+      store.posts.get(postId).downvotedBy.has(downvoterId)
+    ) {
+      reject("already upvoted or downvoted");
+    }
+    postsRef
+      .doc(postId)
+      .update({
+        downvotedBy: firebase.firestore.FieldValue.arrayRemove(downvoterId),
+      })
+      .then(() => {
+        updatePostStatus(postId, 0.8);
+        resolve("downvote removed");
       })
       .catch((err) => reject(err));
   });
@@ -442,3 +490,10 @@ export const urlIsScam =  (inputUrl: string): boolean =>  {
   
   return false
 }
+export const getPostByPostId = (postId: string) => {
+  if (store.posts.has(postId)) {
+    return store.posts.get(postId)
+  }
+  return null
+}
+
