@@ -78,14 +78,19 @@ function openPicture() {
     <!-- User Image -->
     <div class="container mx-auto mt-20 my-10 sm:w-full">
       <div @click="openPicture()">
-      <div> 
-          <img class="rounded-full w-40 h-40 mx-auto hover:border-4 hover:border-slate-500" :src="userPicURL" 
+        <div>
+          <img
+            class="rounded-full w-40 h-40 mx-auto hover:border-4 hover:border-slate-500"
+            :src="userPicURL"
           />
-          </div>
+        </div>
       </div>
     </div>
     <!-- refine the design here  -->
-    <div v-show="show && !viewing" class="mx-auto content-center w-full sm:w-full">
+    <div
+      v-show="show && !viewing"
+      class="mx-auto content-center w-full sm:w-full"
+    >
       <input
         id="pictureURL"
         type="file"
