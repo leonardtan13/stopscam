@@ -178,6 +178,7 @@ const setIsLoading = (isLoadingChange) => {
 </script>
 
 <template>
+<div>
   
 
   <!-- Login Alert -->
@@ -543,6 +544,8 @@ const setIsLoading = (isLoadingChange) => {
       </h6>
     </div>
   </div>
+
+</div>
 </template>
 
 <style scoped>

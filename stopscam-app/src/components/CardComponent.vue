@@ -7,13 +7,21 @@ import {
   getPostByPostId,
 } from "../services/store";
 import "../index.css";
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { auth } from "../firebase";
 import { store } from "../services/store";
 
-const emit = defineEmits({
-  restrict: null,
-});
+const emit = defineEmits(['restrict']);
+
+var voteCount = computed({
+  get() {
+    return props.voteCount
+  },
+
+  set(value) {
+    emit('update:voteCount', value)
+  }
+})
 
 const handleUpvote = async (postId) => {
   if (auth.currentUser === null) {
@@ -28,7 +36,7 @@ const handleUpvote = async (postId) => {
     try {
       const res = await upvotePost(postId, auth.currentUser.uid);
       isUpvoted.value = true;
-      props.voteCount += 1
+      voteCount = voteCount + 1
       return
     } catch (e) {
       console.error(e);
@@ -39,7 +47,7 @@ const handleUpvote = async (postId) => {
     try {
       const res = await removeUpvote(postId, auth.currentUser.uid);
       isUpvoted.value = false;
-      props.voteCount -= 1
+      voteCount -= 1
       return
     } catch (e) {
       console.error(e);
@@ -60,7 +68,7 @@ const handleDownvote = async (postId) => {
     try {
       await downvotePost(postId, auth.currentUser.uid);
       isDownvoted.value = true;
-      props.voteCount -= 1
+      voteCount -= 1
       return
     } catch (e) {
       console.error(e);
@@ -70,7 +78,7 @@ const handleDownvote = async (postId) => {
       console.log("removing downvote")
       await removeDownvote(postId, auth.currentUser.uid);
       isDownvoted.value = false;
-      props.voteCount += 1
+      voteCount += 1
     } catch (e) {
       console.error(e);
     }
@@ -100,18 +108,13 @@ const getDuration = (datePosted) => {
 };
 
 const post= getPostByPostId(props.postId)
-const isUpvoted = ref(post.upvotedBy.has(auth.currentUser.uid))
-const isDownvoted = ref(post.downvotedBy.has(auth.currentUser.uid))
+const isUpvoted = auth.currentUser === null ? false : ref(post.upvotedBy.has(auth.currentUser.uid))
+const isDownvoted = auth.currentUser === null ? false : ref(post.downvotedBy.has(auth.currentUser.uid))
 
 
-const isLoading = ref(false)
 </script>
 
 <template>
-<!-- <Loading :active="isLoading"
-    :is-full-page="true"
-    >
-    </Loading> -->
   <div
     class="grid grid-flow-row grid-cols-9 auto-rows-max gap-2 mx-auto my-5 w-5/6 h-full rounded-xl shadow-xl border"
   >
