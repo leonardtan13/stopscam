@@ -369,42 +369,39 @@ const setIsLoading = (isLoadingChange) => {
                         <div
                           class="flex items-center justify-center w-full mb-12"
                         >
-                          <label
-                            for="toogle"
-                            class="flex items-center cursor-pointer"
-                          >
-                            <div class="relative">
-                              <input
-                                id="toogle"
-                                v-model="isScam"
-                                type="checkbox"
-                                class="sr-only"
-                              />
-                              <div
-                                class="w-10 h-4 bg-gray-400 rounded-full shadow-inner"
-                              ></div>
-                              <div
-                                class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"
-                              ></div>
-                            </div>
-                            <div class="ml-3 text-gray-700 font-medium">
-                              Scam
-                            </div>
-                          </label>
-                        </div>
+                          <div class="relative">
+                            <input
+                              id="toogle"
+                              v-model="isScam"
+                              type="checkbox"
+                              class="sr-only"
+                            />
+                            <div
+                              class="w-10 h-4 bg-gray-400 rounded-full shadow-inner"
+                            ></div>
+                            <div
+                              class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"
+                            ></div>
+                          </div>
+                          <div 
+                              class="ml-3 text-gray-700 font-medium" 
+                              :style="isScam ? 'color: red' : ''"
+                              v-text="isScam ? 'Scam' : 'Legit'">
+                          </div>
+                        </label>
+                      </div>
 
-                        <div v-if="isDisabled()">
-                          <p class="text-amber-700">
-                            All fields have to be filled in before post
-                            submission.
-                          </p>
-                        </div>
-                        <div v-else>
-                          <p class="text-teal-700">
-                            You are all set. Click Post to finalize your
-                            submission.
-                          </p>
-                        </div>
+                      <div v-if="isDisabled()">
+                        <p class="text-amber-700">
+                          All fields have to be filled in before post
+                          submission.
+                        </p>
+                      </div>
+                      <div v-else>
+                        <p class="text-teal-700">
+                          You are all set. Click Post to finalize your
+                          submission.
+                        </p>
                       </div>
                     </div>
                   </div>
