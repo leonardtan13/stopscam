@@ -183,6 +183,30 @@ export const upvotePost = (
   });
 };
 
+export const removeUpvote = (
+  postId: string,
+  upvoterId: string
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (
+      store.posts.get(postId).upvotedBy.has(upvoterId) ||
+      store.posts.get(postId).downvotedBy.has(upvoterId)
+    ) {
+      reject("already upvoted or downvoted");
+    }
+    postsRef
+      .doc(postId)
+      .update({
+        upvotedBy: firebase.firestore.FieldValue.arrayRemove(upvoterId),
+      })
+      .then(() => {
+        updatePostStatus(postId, 0.8);
+        resolve("upvote removed");
+      })
+      .catch((err) => reject(err));
+  });
+};
+
 export const downvotePost = (
   postId: string,
   downvoterId: string
@@ -202,6 +226,30 @@ export const downvotePost = (
       .then(() => {
         updatePostStatus(postId, 0.8);
         resolve("downvoted");
+      })
+      .catch((err) => reject(err));
+  });
+};
+
+export const removeDownvote = (
+  postId: string,
+  downvoterId: string
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (
+      store.posts.get(postId).upvotedBy.has(downvoterId) ||
+      store.posts.get(postId).downvotedBy.has(downvoterId)
+    ) {
+      reject("already upvoted or downvoted");
+    }
+    postsRef
+      .doc(postId)
+      .update({
+        downvotedBy: firebase.firestore.FieldValue.arrayRemove(downvoterId),
+      })
+      .then(() => {
+        updatePostStatus(postId, 0.8);
+        resolve("downvote removed");
       })
       .catch((err) => reject(err));
   });
@@ -417,28 +465,39 @@ export const UpdateUserVotes = (
   return;
 };
 
-
-export const urlIsLegit =  (inputUrl: string): boolean =>  {
-  const legitReviewedPosts : Post[] = getAllLegitPosts(store.posts).filter( (post) => {return !post.isUnderReview})
+export const urlIsLegit = (inputUrl: string): boolean => {
+  const legitReviewedPosts: Post[] = getAllLegitPosts(store.posts).filter(
+    (post) => {
+      return !post.isUnderReview;
+    }
+  );
 
   legitReviewedPosts.forEach((post) => {
     if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
-      return true
+      return true;
     }
-  })
-  return false
-}
+  });
+  return false;
+};
 
-
-export const urlIsScam =  (inputUrl: string): boolean =>  {
-
-  const scamReviewedPosts : Post[] = getAllScamPosts(store.posts).filter( (post) => {return !post.isUnderReview})
+export const urlIsScam = (inputUrl: string): boolean => {
+  const scamReviewedPosts: Post[] = getAllScamPosts(store.posts).filter(
+    (post) => {
+      return !post.isUnderReview;
+    }
+  );
 
   scamReviewedPosts.forEach((post) => {
     if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
-      return true
+      return true;
     }
-  })
-  
-  return false
-}
+  });
+
+  return false;
+};
+export const getPostByPostId = (postId: string) => {
+  if (store.posts.has(postId)) {
+    return store.posts.get(postId);
+  }
+  return null;
+};

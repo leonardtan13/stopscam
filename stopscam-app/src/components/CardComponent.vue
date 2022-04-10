@@ -1,15 +1,26 @@
 <script setup>
 import {
   upvotePost,
+  removeUpvote,
+  removeDownvote,
   downvotePost,
-  retrieveNetVoteCount,
+  getPostByPostId,
 } from "../services/store";
 import "../index.css";
+import { ref, computed } from "vue";
 import { auth } from "../firebase";
 import { store } from "../services/store";
 
-const emit = defineEmits({
-  restrict: null,
+const emit = defineEmits(["restrict"]);
+
+var voteCount = computed({
+  get() {
+    return props.voteCount;
+  },
+
+  set(value) {
+    emit("update:voteCount", value);
+  },
 });
 
 const handleUpvote = async (postId) => {
@@ -18,10 +29,26 @@ const handleUpvote = async (postId) => {
     return;
   }
 
-  try {
-    const res = await upvotePost(postId, auth.currentUser.uid);
-  } catch (e) {
-    console.error(e);
+  if (!isUpvoted.value) {
+    console.log("upvoting post");
+    try {
+      const res = await upvotePost(postId, auth.currentUser.uid);
+      isUpvoted.value = true;
+      voteCount = voteCount.value + 1;
+      return;
+    } catch (e) {
+      console.error(e);
+    }
+  } else {
+    console.log("removing upvote");
+    try {
+      const res = await removeUpvote(postId, auth.currentUser.uid);
+      isUpvoted.value = false;
+      voteCount.value -= 1;
+      return;
+    } catch (e) {
+      console.error(e);
+    }
   }
 };
 
@@ -31,11 +58,30 @@ const handleDownvote = async (postId) => {
     return;
   }
 
-  try {
-    await downvotePost(postId, auth.currentUser.uid);
-  } catch (e) {
-    console.error(e);
+  if (!isDownvoted.value) {
+    console.log("downvoting post");
+    try {
+      await downvotePost(postId, auth.currentUser.uid);
+      isDownvoted.value = true;
+      voteCount.value -= 1;
+      return;
+    } catch (e) {
+      console.error(e);
+    }
+  } else {
+    try {
+      console.log("removing downvote");
+      await removeDownvote(postId, auth.currentUser.uid);
+      isDownvoted.value = false;
+      voteCount.value += 1;
+    } catch (e) {
+      console.error(e);
+    }
   }
+};
+
+const handleBorderColour = (postStatus) => {
+  return postStatus ? ["border-teal-600"] : ["border-red-600"];
 };
 
 const props = defineProps([
@@ -45,9 +91,11 @@ const props = defineProps([
   "images",
   "date",
   "userID",
+  "voteCount",
+  "isLegit",
 ]);
 
-const voteCount = retrieveNetVoteCount(props.postId);
+// const voteCount = ref(retrieveNetVoteCount(props.postId));
 const getDuration = (datePosted) => {
   var hours = Math.abs(new Date() - datePosted) / 36e5;
   if (hours < 1) {
@@ -55,11 +103,22 @@ const getDuration = (datePosted) => {
   }
   return hours < 24 ? `${Math.floor(hours)}h` : `${Math.floor(hours / 24)}d`;
 };
+
+const post = getPostByPostId(props.postId);
+const isUpvoted =
+  auth.currentUser === null
+    ? false
+    : ref(post.upvotedBy.has(auth.currentUser.uid));
+const isDownvoted =
+  auth.currentUser === null
+    ? false
+    : ref(post.downvotedBy.has(auth.currentUser.uid));
 </script>
 
 <template>
   <div
-    class="grid grid-flow-row grid-cols-9 auto-rows-max gap-2 mx-auto my-5 w-5/6 h-full rounded-xl shadow-xl border"
+    class="grid grid-flow-row grid-cols-9 auto-rows-max gap-2 mx-auto my-5 w-5/6 h-full rounded-xl shadow-xl border border-4"
+    :class="handleBorderColour(props.isLegit)"
   >
     <div class="col-span-8 p-5">
       <!-- User -->
@@ -73,13 +132,13 @@ const getDuration = (datePosted) => {
             <div class="flex-col my-auto w-full">
               <button>
                 <router-link
-                  class="font-sans ml-3 font-bold"
+                  class="font-sans ml-3 font-bold sm:text-lg text-sm"
                   :to="'/profile/' + props.userID"
                   >{{ store.users.get(props.userID).name }}</router-link
                 >
               </button>
               <div class="font-sans ml-3">
-                <p class="text-gray-600 text-xs">
+                <p class="text-gray-600 text-xs md:text-md">
                   Posted {{ getDuration(props.date) }} ago
                 </p>
               </div>
@@ -92,7 +151,7 @@ const getDuration = (datePosted) => {
       <div class="w-full">
         <div class="basis-2/3 w-full h-full">
           <p
-            class="font-sans font-bold text-xs sm:text-2xl text-left underline px-4 py-2"
+            class="font-sans font-bold text-sm sm:text-xl md:text-2xl text-left underline px-4 py-2"
           >
             {{ props.link }}
           </p>
@@ -102,7 +161,7 @@ const getDuration = (datePosted) => {
       <!-- Post Body (Caption) -->
       <div class="w-full">
         <p
-          class="font-sans font-normal sm:text-lg text-xs mx-auto text-justify px-4 py-2"
+          class="font-sans font-normal sm:text-lg text-sm mx-auto text-justify px-4 py-2"
         >
           {{ props.caption }}
         </p>
@@ -118,16 +177,17 @@ const getDuration = (datePosted) => {
     </div>
 
     <!-- Voting Button -->
-    <div class="bg-slate-50 pt-5 rounded-r-xl">
-      <div class="flex flex-col w-full h-full">
+    <div class="bg-slate-50 pt-5 rounded-r-xl w-14 sm:w-full -ml-8 sm:ml-0">
+      <div class="flex flex-col w-14 sm:w-full h-full">
         <button
-          id="upvote"
           class="flex flex-initial justify-center"
+          :class="{ upvoted: isUpvoted, upvote: !isUpvoted }"
+          :disabled="isDownvoted"
           @click="handleUpvote(props.postId)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-10 w-10"
+            class="w-10 h-10"
             viewBox="0 0 512 512"
           >
             <path
@@ -138,19 +198,20 @@ const getDuration = (datePosted) => {
         </button>
 
         <p
-          class="flex flex-initial justify-center font-bold text-sm sm:text-xl"
+          class="flex flex-initial justify-center font-bold text-lg sm:text-xl"
         >
-          {{ voteCount }}
+          {{ props.voteCount }}
         </p>
 
         <button
-          id="downvote"
           class="flex flex-initial justify-center"
+          :class="{ downvoted: isDownvoted, downvote: !isDownvoted }"
+          :disabled="isUpvoted"
           @click="handleDownvote(props.postId)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-10 w-10"
+            class="w-10 h-10"
             viewBox="0 0 512 512"
           >
             <path
@@ -165,17 +226,25 @@ const getDuration = (datePosted) => {
 </template>
 
 <style scoped>
-#upvote {
+.upvote {
   fill: #cdcdcd;
 }
-#upvote:hover {
+.upvote:hover {
   fill: #90d998;
 }
 
-#downvote {
+.downvote {
   fill: #cdcdcd;
 }
-#downvote:hover {
+.downvote:hover {
+  fill: #ff585b;
+}
+
+.upvoted {
+  fill: #90d998;
+}
+
+.downvoted {
   fill: #ff585b;
 }
 </style>

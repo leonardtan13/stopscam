@@ -89,8 +89,7 @@ function openPicture() {
     <!-- refine the design here  -->
     <div
       v-show="show && !viewing"
-      class="mx-auto flex flex-col 
-                    items-center justify-center w-full sm:w-full"
+      class="mx-auto flex flex-col items-center justify-center w-full sm:w-full"
     >
       <input
         id="pictureURL"
