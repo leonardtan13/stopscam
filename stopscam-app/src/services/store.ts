@@ -465,35 +465,39 @@ export const UpdateUserVotes = (
   return;
 };
 
-
-export const urlIsLegit =  (inputUrl: string): boolean =>  {
-  const legitReviewedPosts : Post[] = getAllLegitPosts(store.posts).filter( (post) => {return !post.isUnderReview})
+export const urlIsLegit = (inputUrl: string): boolean => {
+  const legitReviewedPosts: Post[] = getAllLegitPosts(store.posts).filter(
+    (post) => {
+      return !post.isUnderReview;
+    }
+  );
 
   legitReviewedPosts.forEach((post) => {
     if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
-      return true
+      return true;
     }
-  })
-  return false
-}
+  });
+  return false;
+};
 
-
-export const urlIsScam =  (inputUrl: string): boolean =>  {
-
-  const scamReviewedPosts : Post[] = getAllScamPosts(store.posts).filter( (post) => {return !post.isUnderReview})
+export const urlIsScam = (inputUrl: string): boolean => {
+  const scamReviewedPosts: Post[] = getAllScamPosts(store.posts).filter(
+    (post) => {
+      return !post.isUnderReview;
+    }
+  );
 
   scamReviewedPosts.forEach((post) => {
     if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
-      return true
+      return true;
     }
-  })
-  
-  return false
-}
+  });
+
+  return false;
+};
 export const getPostByPostId = (postId: string) => {
   if (store.posts.has(postId)) {
-    return store.posts.get(postId)
+    return store.posts.get(postId);
   }
-  return null
-}
-
+  return null;
+};

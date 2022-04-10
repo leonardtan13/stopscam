@@ -64,7 +64,6 @@ defineEmits({
             </button>
           </li>
 
-
           <li class="nav-item">
             <button>
               <router-link

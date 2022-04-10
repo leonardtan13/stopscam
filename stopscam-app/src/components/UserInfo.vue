@@ -69,7 +69,7 @@ const onFileChange = (event, userID) => {
 };
 
 function openPicture() {
-  show.value = true;
+  show.value = !show.value;
 }
 </script>
 
@@ -78,18 +78,40 @@ function openPicture() {
     <!-- User Image -->
     <div class="container mx-auto mt-20 my-10 sm:w-full">
       <div @click="openPicture()">
-      <div> 
-          <img class="rounded-full w-40 h-40 mx-auto hover:border-4 hover:border-slate-500" :src="userPicURL" 
+        <div>
+          <img
+            class="rounded-full w-40 h-40 mx-auto hover:border-4 hover:border-slate-500"
+            :src="userPicURL"
           />
-          </div>
+        </div>
       </div>
     </div>
     <!-- refine the design here  -->
-    <div v-show="show && !viewing" class="mx-auto content-center w-full sm:w-full">
+    <div
+      v-show="show && !viewing"
+      class="mx-auto flex flex-col items-center justify-center w-full sm:w-full"
+    >
       <input
         id="pictureURL"
         type="file"
-        class="mx-auto content-center"
+        class="
+              px-4  
+              bg-teal-900 
+              py-1.5
+              text-base
+              font-normal
+              text-gray-300
+              rounded-lg
+              border 
+              border-teal-500
+              transition
+              ease-in-out
+              m-0
+              hover:border-teal-700
+              hover:bg-teal-700
+              hover:border-2
+              hover:text-gray-100
+              focus:text-gray-500"
         @change="onFileChange($event, userID)"
       />
     </div>
@@ -130,7 +152,7 @@ function openPicture() {
           :caption="post.description"
           :images="post.images"
           :date="post.date"
-          :pointer="index"
+          :userID ="userID"
         />
       </div>
       <div v-else class="grid grid-flow-row auto-rows-max gap-6">
