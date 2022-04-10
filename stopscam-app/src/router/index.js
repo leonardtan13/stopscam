@@ -32,6 +32,11 @@ const router = createRouter({
       path: "/",
       component: () => import("../views/HomeView.vue"),
     },
+
+    {
+      path: "/news",
+      component: () => import("../views/NewsView.vue"),
+    },
   ],
 });
 

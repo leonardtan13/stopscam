@@ -5,7 +5,7 @@ import NavBar from "./components/NavBar.vue";
 import { auth } from "./firebase";
 import { ref, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
-import { initPostsData, enableUpdates } from "./services/store";
+import { initPostsData, enableUpdates, initUsersData } from "./services/store";
 
 const router = useRouter();
 const isLoggedIn = ref(true);
@@ -13,6 +13,7 @@ const isLoggedIn = ref(true);
 onBeforeMount(() => {
   console.log("calling init...");
   initPostsData();
+  initUsersData();
   console.log("enabling realtime updates...");
   enableUpdates();
 });

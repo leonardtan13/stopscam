@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from "vue";
 import {
   upvotePost,
   downvotePost,
@@ -7,19 +6,18 @@ import {
 } from "../services/store";
 import "../index.css";
 import { auth } from "../firebase";
-import { useRouter } from "vue-router";
 import { store } from "../services/store";
 
-// console.log(auth.currentUser.uid)
-
-const router = useRouter();
+const emit = defineEmits({
+  restrict: null,
+});
 
 const handleUpvote = async (postId) => {
   if (auth.currentUser === null) {
-    router.push({ path: "/login" });
+    emit("restrict");
+    return;
   }
 
-  // console.log("upvoting")
   try {
     const res = await upvotePost(postId, auth.currentUser.uid);
   } catch (e) {
@@ -29,12 +27,12 @@ const handleUpvote = async (postId) => {
 
 const handleDownvote = async (postId) => {
   if (auth.currentUser === null) {
-    router.push({ path: "/login" });
+    emit("restrict");
+    return;
   }
 
-  // console.log("upvoting")
   try {
-    const res = await downvotePost(postId, auth.currentUser.uid);
+    await downvotePost(postId, auth.currentUser.uid);
   } catch (e) {
     console.error(e);
   }
@@ -46,28 +44,8 @@ const props = defineProps([
   "caption",
   "images",
   "date",
-  "pointer",
+  "userID",
 ]);
-
-const mock_user_info = [
-  [
-    "JustinBeliber",
-    "https://media.gq.com/photos/56bcb218cdf2db6945d2ef93/16:9/w_2000,h_1125,c_limit/bieber-coverstory-square.jpg",
-  ],
-  ["SungKyungLee", "https://i.mydramalist.com/6q6Z2_5c.jpg"],
-  [
-    "RoseBlackPink",
-    "https://i.zoomtventertainment.com/story/Rose_at_MET_Gala.png?tr=w-1200,h-900",
-  ],
-  [
-    "Leonardo",
-    "https://media-exp1.licdn.com/dms/image/C5603AQHc57nlB301dQ/profile-displayphoto-shrink_800_800/0/1597763158199?e=1652918400&v=beta&t=Wp_1rCF6oK46LSCz9xWZNn_euavws5tDAvBDZLggefI",
-  ],
-  [
-    "UpperMoon1",
-    "https://media-exp1.licdn.com/dms/image/C5103AQH4suaqrWXUFA/profile-displayphoto-shrink_800_800/0/1575890945695?e=1652918400&v=beta&t=pLqjned5sdZCLP6tv4vfYr6rLpz_byv9WIkudSKVyLQ",
-  ],
-];
 
 const voteCount = retrieveNetVoteCount(props.postId);
 const getDuration = (datePosted) => {
@@ -75,7 +53,7 @@ const getDuration = (datePosted) => {
   if (hours < 1) {
     return `${Math.floor(hours * 60)}m`;
   }
-  return hours < 24 ? `${hours}h` : `${Math.floor(hours / 24)}d`;
+  return hours < 24 ? `${Math.floor(hours)}h` : `${Math.floor(hours / 24)}d`;
 };
 </script>
 
@@ -89,18 +67,17 @@ const getDuration = (datePosted) => {
         <div class="px-4 w-full h-full">
           <div class="flex">
             <img
-              class="float-left object-cover items-stretch w-12 h-12 rounded-full"
-              :src="mock_user_info[props.pointer][1]"
+              class="float-left object-cover items-stretch w-12 h-12 rounded-full bg-teal-800"
+              :src="store.users.get(props.userID).userPicURL"
             />
             <div class="flex-col my-auto w-full">
-              <div class="font-sans ml-3 font-bold">
-                <!-- {{ mock_user_info[props.pointer][0] }} -->
-
-                <!-- <h2>{{ store.posts[postId] }}</h2> -->
-                {{ store.posts.get(props.postId).postedBy }}
-                <!-- {{props.postId}} -->
-                <!-- {{ console.log(store.posts) }} -->
-              </div>
+              <button>
+                <router-link
+                  class="font-sans ml-3 font-bold"
+                  :to="'/profile/' + props.userID"
+                  >{{ store.users.get(props.userID).name }}</router-link
+                >
+              </button>
               <div class="font-sans ml-3">
                 <p class="text-gray-600 text-xs">
                   Posted {{ getDuration(props.date) }} ago
