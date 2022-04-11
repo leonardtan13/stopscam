@@ -262,7 +262,7 @@ const setIsLoading = (isLoadingChange) => {
           alt="Profile image"
         />
         <input
-          class="col-span-4 bg-white px-5 rounded-lg focus:outline-none"
+          class="col-span-4 bg-white px-5 rounded-lg focus:outline-none  text-xs sm:text-md"
           type="text"
           name="create"
           placeholder="Post something to your community"
@@ -369,6 +369,7 @@ const setIsLoading = (isLoadingChange) => {
                         <div
                           class="flex items-center justify-center w-full mb-12"
                         >
+                        <label for='toogle' class='flex items-center cursor-pointer'>
                           <div class="relative">
                             <input
                               id="toogle"
@@ -390,7 +391,7 @@ const setIsLoading = (isLoadingChange) => {
                           </div>
                         </label>
                       </div>
-
+                    </div>
                       <div v-if="isDisabled()">
                         <p class="text-amber-700">
                           All fields have to be filled in before post

@@ -151,7 +151,7 @@ const isDownvoted =
       <div class="w-full">
         <div class="basis-2/3 w-full h-full">
           <p
-            class="font-sans font-bold text-sm sm:text-xl md:text-2xl text-left underline px-4 py-2"
+            class="font-sans break-words font-bold text-xs sm:text-xl md:text-2xl text-left underline px-4 py-2"
           >
             {{ props.link }}
           </p>
@@ -161,7 +161,7 @@ const isDownvoted =
       <!-- Post Body (Caption) -->
       <div class="w-full">
         <p
-          class="font-sans font-normal sm:text-lg text-sm mx-auto text-justify px-4 py-2"
+          class="font-sans font-normal text-xs sm:text-lg mx-auto text-justify px-4 py-2"
         >
           {{ props.caption }}
         </p>

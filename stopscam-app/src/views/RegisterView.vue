@@ -151,7 +151,7 @@ const Register = () => {
         class="rounded-2xl bg-white rounded overflow-hidden shadow-xl p-5 sm:absolute right-10"
       >
         <form class="space-y-4" @submit.prevent="Register">
-          <div class="rounded-md space-y-px px-3">
+          <div class="rounded-md space-y-px sm:px-3">
             <div class="grid gap-6">
               <div class="col-span-12 h-14">
                 <FormInput

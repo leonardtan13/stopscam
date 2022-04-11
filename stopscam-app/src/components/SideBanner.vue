@@ -5,7 +5,7 @@ defineProps({
 
 const message = {
   login: [
-    `Welcome back to the <br /> community.`,
+    `Welcome back to the community.`,
     `Login to start spreading the words.`,
   ],
   register: [
