@@ -472,11 +472,13 @@ export const urlIsLegit = (inputUrl: string): boolean => {
     }
   );
 
-  legitReviewedPosts.forEach((post) => {
-    if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
+  for (const post of legitReviewedPosts) {
+    if (post.link.toLowerCase() == inputUrl.toLowerCase()) {
+      console.log("LOOK AT THIS",post.link.toLowerCase(), inputUrl)
+      console.log("Similarity? ", post.link === inputUrl)
       return true;
     }
-  });
+  }
   return false;
 };
 
@@ -487,16 +489,13 @@ export const urlIsScam = (inputUrl: string): boolean => {
     }
   );
 
-  scamReviewedPosts.forEach((post) => {
-    //console.log(post.link, typeof(post.link))
-    //console.log(inputUrl, typeof(inputUrl))
-    //console.log("Similarity? ", post.link === inputUrl)
+  for (const post of scamReviewedPosts) {
     if (post.link.toLowerCase() == inputUrl.toLowerCase()) {
       console.log("LOOK AT THIS",post.link.toLowerCase(), inputUrl)
       console.log("Similarity? ", post.link === inputUrl)
       return true;
     }
-  });
+  }
 
   return false;
 };
