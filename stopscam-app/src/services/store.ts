@@ -472,11 +472,11 @@ export const urlIsLegit = (inputUrl: string): boolean => {
     }
   );
 
-  legitReviewedPosts.forEach((post) => {
-    if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
+  for (const post of legitReviewedPosts) {
+    if (post.link.toLowerCase() == inputUrl.toLowerCase()) {
       return true;
     }
-  });
+  }
   return false;
 };
 
@@ -487,11 +487,11 @@ export const urlIsScam = (inputUrl: string): boolean => {
     }
   );
 
-  scamReviewedPosts.forEach((post) => {
-    if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
+  for (const post of scamReviewedPosts) {
+    if (post.link.toLowerCase() == inputUrl.toLowerCase()) {
       return true;
     }
-  });
+  }
 
   return false;
 };
