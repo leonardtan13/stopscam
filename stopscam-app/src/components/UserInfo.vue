@@ -150,8 +150,8 @@ function openPicture() {
           :vote-count="retrieveNetVoteCount(post.id)"
         />
       </div>
-      <div v-else class="grid grid-flow-row auto-rows-max gap-6">
-        You have not posted anything
+      <div v-else class="grid grid-flow-row font-bold text-slate-400 text-lg md:text-4xl text-center">
+        You have not posted anything yet...
       </div>
     </div>
   </body>
