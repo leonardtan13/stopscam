@@ -36,7 +36,7 @@ function updateURL(userID, userPicURL) {
     })
     .then(function () {
       console.log("Document successfully updated!");
-      updated.value = true
+      updated.value = true;
     })
     .catch(function (error) {
       // The document probably doesn't exist.
@@ -103,7 +103,7 @@ function openPicture() {
         class="px-4 bg-teal-900 py-1.5 text-base font-normal text-gray-300 rounded-lg border border-teal-500 transition ease-in-out m-0 hover:border-teal-700 hover:bg-teal-700 hover:border-2 hover:text-gray-100 focus:text-gray-500"
         @change="onFileChange($event, userID)"
       />
-      <div v-show='updated'>
+      <div v-show="updated">
         <div class="text-center text-gray-300 text-xl font-semibold">
           Picture Uploaded
         </div>
@@ -150,7 +150,10 @@ function openPicture() {
           :vote-count="retrieveNetVoteCount(post.id)"
         />
       </div>
-      <div v-else class="grid grid-flow-row font-bold text-slate-400 text-lg md:text-4xl text-center">
+      <div
+        v-else
+        class="grid grid-flow-row font-bold text-slate-400 text-lg md:text-4xl text-center"
+      >
         You have not posted anything yet...
       </div>
     </div>

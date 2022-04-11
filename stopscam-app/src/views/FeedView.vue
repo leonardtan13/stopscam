@@ -226,7 +226,7 @@ const setIsLoading = (isLoadingChange) => {
           :src="store.users.get(auth.currentUser.uid).userPicURL" alt="Profile image" />
         <img v-else class="self-center justify-self-end object-cover rounded-full w-10 h-10"
           src="https://stopscam.s3.ap-southeast-1.amazonaws.com/default/scam-icon.png" alt="Profile image" />
-        <input class="col-span-4 bg-white px-5 rounded-lg focus:outline-none" type="text" name="create"
+        <input class="col-span-4 bg-white px-5 rounded-lg focus:outline-none text-xs sm:text-md" type="text" name="create"
           placeholder="Post something to your community" @click="handlePost()" />
       </div>
     </div>
