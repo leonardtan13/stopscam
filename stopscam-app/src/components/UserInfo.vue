@@ -1,7 +1,7 @@
 <script setup>
 import { db } from "../firebase";
-import { ref, onMounted } from "vue";
-import { uploadProfilePictoS3, getAllPostsByUserId } from "../services/store";
+import { ref } from "vue";
+import { uploadProfilePictoS3, getAllPostsByUserId, retrieveNetVoteCount } from "../services/store";
 import cardComponent from "../components/CardComponent.vue";
 
 defineProps({
@@ -153,6 +153,7 @@ function openPicture() {
           :images="post.images"
           :date="post.date"
           :userID ="userID"
+          :vote-count="retrieveNetVoteCount(post.id)"
         />
       </div>
       <div v-else class="grid grid-flow-row auto-rows-max gap-6">
