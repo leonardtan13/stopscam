@@ -139,6 +139,8 @@ const Register = () => {
         authenticate.message = fbError.code;
         error.email = [true, ""];
       });
+  } else {
+      window.setTimeOut(loading.value = false, 3000);
   }
 };
 </script>
