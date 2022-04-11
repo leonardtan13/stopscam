@@ -1,5 +1,11 @@
 <script setup>
-import { store, uploadFiletoS3, upvotePost } from "../services/store";
+import { 
+  store, 
+  uploadFiletoS3, 
+  upvotePost,
+  urlIsLegit,
+  urlIsScam,
+   } from "../services/store";
 import { findSimilarityInPosts } from "../services/LinkSimilarity";
 import ErrorMsg from "../components/ErrorMsg.vue";
 import { ref, reactive } from "vue";
@@ -12,6 +18,7 @@ const error = reactive({
   link: [false, ""],
 });
 
+
 // const link = ref("");
 const similarity = ref({});
 
@@ -19,6 +26,7 @@ const getSimilarity = (currentLink) => {
   const posts = store.posts;
   similarity.value = findSimilarityInPosts(posts, currentLink);
 };
+
 
 //Test for File Upload
 const file = ref("");
@@ -60,10 +68,39 @@ function inputValidation() {
   }
 }
 
+const submitResults = reactive({
+  link: "",
+  class: "default"
+})
+function results(inputLink) {
+  console.log("FROM FUNCTION", inputLink, typeof(inputLink))
+  let isLegit = urlIsLegit(inputLink);
+  let isScam = urlIsScam(inputLink);
+
+  console.log("RESULTS:", isLegit, isScam)
+
+  if(isLegit == "true") {
+    submitResults.link = [inputLink]
+    submitResults.class = "legitPost"
+    return
+  } 
+  else if(isScam == "true") {
+    submitResults.link = [inputLink]
+    submitResults.class = "ScamPost"
+    return
+  }
+  else {
+    
+    console.log(similarity)
+  }
+
+}
+
 const submit = () =>  {
   loading.value = true;
-  console.log(state.link);
+  console.log("FROM BUTTON", state.link, typeof(state.link));
   inputValidation();
+  results(state.link)
 
 }
 </script>
@@ -108,11 +145,16 @@ const submit = () =>  {
                     :error="error.link[1]"
                   />
         </div>
+
+        <div>
+         
+
+        </div>
       </div>
     </div>
 
 
-  text: <input v-model="link" @change="getSimilarity(link)" />
+  text: <input v-model="state.link" @change="getSimilarity(state.link)" />
 
   <h2>Similarity: {{ similarity }}</h2>
   <button @click="upvotePost('71euK9YfaU9lr5mv3yHU', '49')">Upvote</button>

@@ -488,7 +488,12 @@ export const urlIsScam = (inputUrl: string): boolean => {
   );
 
   scamReviewedPosts.forEach((post) => {
-    if (post.link.toLowerCase() === inputUrl.toLowerCase()) {
+    //console.log(post.link, typeof(post.link))
+    //console.log(inputUrl, typeof(inputUrl))
+    //console.log("Similarity? ", post.link === inputUrl)
+    if (post.link.toLowerCase() == inputUrl.toLowerCase()) {
+      console.log("LOOK AT THIS",post.link.toLowerCase(), inputUrl)
+      console.log("Similarity? ", post.link === inputUrl)
       return true;
     }
   });
