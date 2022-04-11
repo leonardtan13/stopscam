@@ -1,7 +1,11 @@
 <script setup>
 import { db } from "../firebase";
 import { ref } from "vue";
-import { uploadProfilePictoS3, getAllPostsByUserId, retrieveNetVoteCount } from "../services/store";
+import {
+  uploadProfilePictoS3,
+  getAllPostsByUserId,
+  retrieveNetVoteCount,
+} from "../services/store";
 import cardComponent from "../components/CardComponent.vue";
 
 defineProps({
@@ -23,6 +27,7 @@ function formatRepScore(repScore) {
 }
 
 //update user database
+const updated = ref(false);
 function updateURL(userID, userPicURL) {
   db.collection("users")
     .doc(userID)
@@ -31,6 +36,7 @@ function updateURL(userID, userPicURL) {
     })
     .then(function () {
       console.log("Document successfully updated!");
+      updated.value = true
     })
     .catch(function (error) {
       // The document probably doesn't exist.
@@ -94,26 +100,14 @@ function openPicture() {
       <input
         id="pictureURL"
         type="file"
-        class="
-              px-4  
-              bg-teal-900 
-              py-1.5
-              text-base
-              font-normal
-              text-gray-300
-              rounded-lg
-              border 
-              border-teal-500
-              transition
-              ease-in-out
-              m-0
-              hover:border-teal-700
-              hover:bg-teal-700
-              hover:border-2
-              hover:text-gray-100
-              focus:text-gray-500"
+        class="px-4 bg-teal-900 py-1.5 text-base font-normal text-gray-300 rounded-lg border border-teal-500 transition ease-in-out m-0 hover:border-teal-700 hover:bg-teal-700 hover:border-2 hover:text-gray-100 focus:text-gray-500"
         @change="onFileChange($event, userID)"
       />
+      <div v-show='updated'>
+        <div class="text-center text-gray-300 text-xl font-semibold">
+          Picture Uploaded
+        </div>
+      </div>
     </div>
 
     <!-- User Profile -->
@@ -138,7 +132,7 @@ function openPicture() {
     </div>
 
     <!-- User Posts -->
-    <div class="container mx-auto my-10 p-6 rounded-xl w-3/4 sm:w-2/3 bg-white">
+    <div class="w-5/6 sm:w-2/3 mx-auto py-6 bg-white rounded-xl">
       <div
         v-if="getAllPostsByUserId(userID).length > 0"
         class="grid grid-flow-row auto-rows-max gap-6"
@@ -152,7 +146,7 @@ function openPicture() {
           :caption="post.description"
           :images="post.images"
           :date="post.date"
-          :userID ="userID"
+          :user-i-d="userID"
           :vote-count="retrieveNetVoteCount(post.id)"
         />
       </div>
