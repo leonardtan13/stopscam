@@ -388,7 +388,7 @@ const setIsLoading = (isLoadingChange) => {
                               :style="isScam ? 'color: red' : ''"
                               v-text="isScam ? 'Scam' : 'Legit'">
                           </div>
-         
+                        </label>
                       </div>
 
                       <div v-if="isDisabled()">
@@ -428,7 +428,6 @@ const setIsLoading = (isLoadingChange) => {
                   Post
                 </button>
               </div>
-            </div>
             </div>
           </TransitionChild>
         </div>
