@@ -474,8 +474,6 @@ export const urlIsLegit = (inputUrl: string): boolean => {
 
   for (const post of legitReviewedPosts) {
     if (post.link.toLowerCase() == inputUrl.toLowerCase()) {
-      console.log("LOOK AT THIS",post.link.toLowerCase(), inputUrl)
-      console.log("Similarity? ", post.link === inputUrl)
       return true;
     }
   }
@@ -491,8 +489,6 @@ export const urlIsScam = (inputUrl: string): boolean => {
 
   for (const post of scamReviewedPosts) {
     if (post.link.toLowerCase() == inputUrl.toLowerCase()) {
-      console.log("LOOK AT THIS",post.link.toLowerCase(), inputUrl)
-      console.log("Similarity? ", post.link === inputUrl)
       return true;
     }
   }
